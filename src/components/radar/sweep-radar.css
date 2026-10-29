@@ -1,0 +1,327 @@
+.flat-radar {
+  min-width: 0;
+  width: 100%;
+}
+.flat-radar-stage {
+  position: relative;
+  height: 420px;
+  border: 1px solid #cfdfd5;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e5f1e9;
+  isolation: isolate;
+}
+.flat-radar-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(#b4cbb52b 1px, transparent 1px),
+    linear-gradient(90deg, #b4cbb52b 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.flat-radar-dial {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: min(76%, 330px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+.flat-radar-ring {
+  position: absolute;
+  border: 1px solid #92b3999c;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.flat-radar-ring.ring-outer {
+  width: 100%;
+  height: 100%;
+}
+.flat-radar-ring.ring-middle {
+  width: 72%;
+  height: 72%;
+}
+.flat-radar-ring.ring-inner {
+  width: 43%;
+  height: 43%;
+}
+.flat-radar-axis {
+  position: absolute;
+  background: #8eaf9838;
+}
+.flat-radar-axis.axis-horizontal {
+  height: 1px;
+  width: 112%;
+  top: 50%;
+  left: -6%;
+}
+.flat-radar-axis.axis-vertical {
+  width: 1px;
+  height: 112%;
+  left: 50%;
+  top: -6%;
+}
+.flat-radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 265deg,
+    #71bd8e10 290deg,
+    #56ac7f44 335deg,
+    #328c6199 359deg,
+    transparent 360deg
+  );
+  animation: flat-radar-turn 5s linear infinite;
+  will-change: transform;
+}
+.flat-radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 50%;
+  background: linear-gradient(#318c60, #318c6020);
+  box-shadow: 0 0 7px #59b78a6b;
+}
+.flat-radar-centre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #254e3c;
+  color: #cdf3d6;
+  border: 7px solid #d4e7d9;
+  box-shadow: 0 0 0 1px #a8c6ad;
+  display: grid;
+  place-items: center;
+}
+.flat-radar-ping {
+  position: absolute;
+  top: 24%;
+  left: 73%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #408b5e;
+  box-shadow: 0 0 0 4px #6eb18524;
+  animation: flat-radar-light 1.5s ease-out both;
+}
+.flat-radar-ping::after {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border: 1px solid #3c9867;
+  border-radius: 50%;
+  animation: flat-radar-echo 1.5s ease-out both;
+}
+.flat-radar-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #88a990;
+}
+.flat-radar-dot.dot-one {
+  top: 65%;
+  left: 18%;
+}
+.flat-radar-dot.dot-two {
+  top: 77%;
+  left: 66%;
+}
+.flat-radar-readout {
+  position: absolute;
+  right: 18px;
+  top: 23px;
+  width: 206px;
+  height: 52px;
+  border: 1px solid #c8ddce;
+  border-radius: 8px;
+  background: #fffffff2;
+  box-shadow: 0 7px 24px #254e3c09;
+  pointer-events: none;
+}
+.flat-radar-name {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  color: #315c42;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease;
+}
+.flat-radar-name strong {
+  font-weight: 650;
+}
+.flat-radar-name[data-active='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+.flat-radar-links {
+  position: absolute;
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.45fr);
+  width: auto;
+  gap: 5px;
+}
+.flat-radar-links a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  min-width: 0;
+  white-space: normal;
+  padding: 7px 5px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #355c44;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 550;
+}
+.flat-radar-links a[data-active='true'] {
+  background: #f8fdf9;
+  border-color: #bdd8c6;
+  color: #164f34;
+}
+.flat-radar-links a:first-child {
+  display: flex;
+}
+.flat-radar-links a:hover {
+  background: #d0ecdc;
+  border-color: #7caf90;
+}
+.flat-radar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 46px;
+}
+.flat-radar-footer p,
+.flat-radar-static {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #4f6d5c;
+}
+.flat-radar-controls {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-height: 44px;
+}
+.flat-radar-controls button {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #365d45;
+}
+.flat-radar-controls button:hover,
+.flat-radar-controls button[aria-pressed='true'] {
+  background: #d5f6e7;
+}
+.flat-radar-audio-note {
+  color: #4f6d5c;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+.flat-radar[data-running='false'] .flat-radar-sweep,
+.flat-radar[data-running='false'] .flat-radar-ping,
+.flat-radar[data-running='false'] .flat-radar-ping::after {
+  animation-play-state: paused;
+}
+@keyframes flat-radar-turn {
+  from {
+    transform: rotate(42deg);
+  }
+  to {
+    transform: rotate(402deg);
+  }
+}
+@keyframes flat-radar-light {
+  0% {
+    background: #aff2be;
+    box-shadow: 0 0 16px 5px #73cd93aa;
+  }
+  100% {
+    background: #408b5e;
+    box-shadow: 0 0 0 4px #6eb18524;
+  }
+}
+@keyframes flat-radar-echo {
+  from {
+    opacity: 0.8;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@media (max-width: 760px) {
+  .flat-radar {
+    max-width: 500px;
+    margin-inline: auto;
+  }
+  .flat-radar-stage {
+    height: 310px;
+  }
+  .flat-radar-dial {
+    width: min(78%, 250px);
+    top: 44%;
+  }
+  .flat-radar-readout {
+    top: 16px;
+    right: 14px;
+    width: 190px;
+    height: 46px;
+  }
+  .flat-radar-name {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .flat-radar-links {
+    left: 6px;
+    right: 6px;
+    bottom: 9px;
+    gap: 2px;
+  }
+  .flat-radar-links a {
+    font-size: 12px;
+    padding-inline: 3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flat-radar *,
+  .flat-radar *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .flat-radar-sweep {
+    transform: rotate(40deg);
+  }
+}

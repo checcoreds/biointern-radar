@@ -1,0 +1,161 @@
+# BioIntern Radar
+
+A mobile-friendly starting point for undergraduate life-sciences students comparing research internships and preparing applications.
+
+The default catalogue contains **11 real, official-source records**, initially researched on **28 October 2026**. DAAD RISE eligibility was rechecked on **29 October 2026**; other field dates are unchanged. They include upcoming programmes, open calls, closed past cycles and general lab-enquiry routes. **They are not 11 currently open vacancies.** Six fictional examples remain in a separate **Fictional demos only** collection.
+
+## Preview on this Mac
+
+Run these commands in the **same Terminal window**, one at a time:
+
+```sh
+cd "/Users/erossi/Desktop/BioIntern Radar"
+source "$HOME/.nvm/nvm.sh"
+nvm use
+npm run dev
+```
+
+Wait for Vite's `Local:` line, then open **http://127.0.0.1:5173/** without quotation marks. Keep Terminal running; **Control+C** stops it. Run `pwd` if npm reports `ENOENT`: it should show the project folder, not `/Users/erossi`.
+
+If a server is already running, use its link. If port 5173 is occupied by something else, run `npm run dev -- --port 5174` and open the printed URL.
+
+Dependencies are already installed. On a fresh checkout, install them after `nvm use`:
+
+```sh
+npm ci --ignore-scripts
+```
+
+This downloads the exact packages recorded in `package-lock.json` without executing dependency installation scripts. Use Node **24**, selected by `.nvmrc`; Node 14 is too old. Other contributors need Node 24 installed. If nvm is unavailable on this Mac, its existing Node can be selected for that Terminal with:
+
+```sh
+export PATH="$HOME/.nvm/versions/node/v24.16.0/bin:$PATH"
+```
+
+## Try the student workflows
+
+1. Open **Explore internships**. Compare location, degree level, deadline, duration, funding and application status on each card.
+2. Combine **Application status → Open** and **Funding → Funded**, even quickly. Closed calls must not appear.
+3. Search **genomics**, sort by deadline, or hide closed calls. Search/filter/sort settings are in the URL and survive refresh and browser Back/Forward.
+4. Open a detail page, then use **Back to the catalogue**. It restores your search, filters and scroll. Direct detail visits fall back to the general catalogue. Modified clicks still open normal links in new tabs.
+5. **Save** a record and revisit it through **Saved**. Open it again and tick preparation steps. Both saves and per-record progress persist across navigation and reloads in this browser.
+6. Use **Reset this checklist** to clear that opportunity's progress. Unsave separately to remove it from your shortlist. Clearing browser data clears device-only progress; there is no account or cross-device sync.
+7. On mobile, expand filters, make selections and choose **Show N results** to collapse the panel and focus the results.
+8. Select **Fictional demos only** to inspect fixture scenarios, including advertised-position examples. They have conspicuous demo labels and no official application links.
+
+Each detail answers: **what will I do, am I eligible, when does it happen, what does it cost, what must I prepare, and how do I apply?** A summary near the title shows deadline, duration, funding and the official-source link. Expand **Sources & notes** within a section for its field evidence and check dates. General checklists do not override provider requirements.
+
+On mobile, the compact **Main menu** button opens navigation; Escape closes it. Catalogue cards prioritise deadline, funding and eligibility, including key university-country, study-year or other restrictions. These highlights are not the complete eligibility rules: always read the detail and official source. Cards initially show two topic tags; tap **+N more** (or use Enter/Space) to reveal the others, then **Show fewer** to collapse them. An empty Saved page shows its message and Explore button immediately; search, filters and sorting appear once an opportunity is saved.
+
+The overview keeps its radar links and a short three-step guide. Expand **Understand the three opportunity types** for category definitions. Typography uses the device's native system fonts, including Apple's system font on Apple devices; no downloaded font, key or external font service is required. Other devices use their system sans-serif fallback.
+
+The research radar uses a smooth CSS sweep. Every five-second revolution pulses the light and crossfades the featured field (Genomics → Neuroscience → Molecular biology). All three field links remain available. Use the speaker button to enable quiet pings; sound starts only after that click. Pause and reduced-motion preferences stop the animation. It does not use WebGL or load the retired 3D code. See [radar notes](docs/radar.md).
+
+## Honest information labels
+
+| Label                    | Meaning                                                                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Official sources checked | Specific facts were checked against the linked pages on the recorded date. It does not mean every field is known or applications remain open. |
+| Not stated by the source | The checked source does not provide that field. It does not mean there is no requirement.                                                     |
+| Not yet checked          | This field has not been verified.                                                                                                             |
+| Not applicable           | The field does not apply to this route; the evidence note explains why.                                                                       |
+| Source unclear           | Checked sources are ambiguous or contradictory. Confirm with the organiser.                                                                   |
+| No advertised vacancy    | A general lab-enquiry route, with no specific opening confirmed. This differs from an unknown application status.                             |
+| Fictional demo           | A made-up UI fixture, not factual internship information.                                                                                     |
+
+See [the source review](docs/source-review.md) for the complete collection and caveats. In particular, the VBC page does not name a cycle year, ETH pages disagree about a deadline time zone, and NUS has conflicting opening dates. Those fields stay explicitly unresolved. The KI entry is the published, closed **2026** cycle, not a claimed 2027 opening.
+
+Application statuses are manual snapshots. The app can conservatively close an elapsed published deadline when rendering; it never infers an open call merely because a deadline is in the future. No automatic research or scheduled verification is running.
+
+## Run project checks
+
+```sh
+npm test
+npm run build
+npm run format:check
+```
+
+- **Tests** cover rapid combined changes, URL/history controls, catalogue scroll return, all record pages, save/unsave and per-record checklist persistence, corrupt/blocked storage, evidence, sorting, deadlines and accessibility structure.
+- **Build** checks TypeScript, then writes optimised static files to `dist/`.
+- **Formatting check** reports inconsistent source formatting without changing files. `npm run format` formats them.
+- `npm run test:watch` repeats tests while editing; press `q` to exit.
+- `npm run preview` serves an existing build at **http://127.0.0.1:4173/**. It does not deploy anything.
+
+The axe tests use jsdom and cannot check rendered contrast or reflow. Browser verification must also cover the requested widths, keyboard focus, long filter labels, scroll restoration and actual reload behaviour.
+
+## Project map
+
+```text
+src/
+  App.tsx                       Layout, routes, title and scroll restoration
+  main.tsx                      React and BrowserRouter entry point
+  styles.css                    Tailwind, shared identity and responsive styles
+  types/opportunity.ts          JSON-compatible records and evidence contracts
+  data/realOpportunities.ts      Manually researched official-source snapshot
+  data/opportunities.ts          Six separate fictional fixtures
+  lib/opportunities.ts          Repository, filtering, sorting, status and dates
+  lib/evidence.ts               Honest field labels and evidence lookup
+  lib/defineRealOpportunity.ts   Required explicit evidence and date validation
+  lib/useCatalogueQuery.ts       Safe accumulating URL changes
+  lib/catalogueNavigation.ts     Validated catalogue-return context
+  lib/device.tsx                Shared state provider for saves/checklists
+  lib/deviceStorage.ts          Storage schema validation
+  lib/deviceContext.ts          Stable shared React context
+  lib/useDevice.ts              Hook for accessing device state
+  components/                   Shared cards, notices and checklist
+  components/radar/             CSS radar, field links and opt-in synthesised audio
+  pages/                        Home, catalogue/saved, detail pages
+  test/                         Behavioural, data and accessibility regressions
+docs/source-review.md            Source audit and unresolved facts
+public/_headers                 Security headers for Cloudflare Pages
+.github/workflows/ci.yml         Build and test checks; no deployment
+AGENTS.md                        Project conventions
+```
+
+A **component** is a reusable interface piece. A **route** maps a URL to a page. A **type** describes the data shape. The **repository adapter** keeps the interface separate from the data source. A future Supabase adapter can replace local access without changing the meaning of fields or evidence states; that milestone also needs loading/error handling, validation and database access policies.
+
+Filters: `search`, `field`, `country`, `degree`, `status`, `funding`, `period`, `category`, `collection`, `sort`, `hideClosed`. Unknown dates sort last in both directions. Search matches all entered words across titles, institutions, countries, locations, categories and topics. Reset returns to the default collection for the current page.
+
+## Adding and reviewing real data
+
+Use official institution/programme pages only. Preserve the named cycle, record the actual date checked, and attach a source to each confirmed factual field. Use `null` for missing values and evidence to explain why. Never fill gaps from general expectations, old cycles or third-party summaries. Do not turn generic hosting guidance into a confirmed vacancy. Document conflicting sources instead of silently reconciling them.
+
+Wrap each real record with `defineRealOpportunity` from `src/lib/defineRealOpportunity.ts`. It requires an explicit evidence entry for **every** key in `factKeys`, plus dated source entries. There is no default verification date and filling in a value never marks it as checked. For example, after actually checking a funding page:
+
+```ts
+sources: [{ title: 'Official funding page', url: fundingUrl, checkedAt: actualCheckDate }],
+evidence: {
+  // Supply all other factKeys explicitly too.
+  funding: { state: 'source-checked', sourceUrl: fundingUrl, checkedAt: actualCheckDate },
+  gpaRequirement: { state: 'not-checked', sourceUrl: null, checkedAt: null },
+},
+```
+
+Use `not-stated` only after looking for the information in the named source; it needs a source and actual check date too. `not-applicable` also requires an explanation. The validator rejects absent/invalid dates, missing evidence, checked facts without values, and evidence that does not match a listed source/date. An explicit `not-checked` value stays unchecked. `lastVerifiedDate` is calculated from the latest field check as a summary; individual dates remain visible under **Sources & notes**. This validates the record structure, not the truth of a claim: a person still needs to read the source.
+
+Use stable IDs that distinguish annual cycles so device progress does not move into a different call. Keep task IDs stable across wording edits. Data is JSON-compatible for PostgreSQL/Supabase: nullable fields, arrays for topics/degrees/documents, constrained categories/statuses and a field-evidence object.
+
+All current user state remains in localStorage under `biointern-radar:device:v1`. No personal application documents are collected. Storage is validated, changes sync between tabs, and the UI warns when persistence is unavailable.
+
+## GitHub and hosting preparation
+
+A local Git baseline is committed on `main`. No remote or public deployment is configured. A commit is a recoverable snapshot of tracked files; it does not publish the app. Inspect the baseline with `git log -1 --oneline` and any later edits with `git status`. To save a later milestone:
+
+```sh
+git add .
+git commit -m "Describe the next milestone"
+```
+
+When you approve publishing, Cloudflare Pages can use:
+
+| Setting          | Value                                         |
+| ---------------- | --------------------------------------------- |
+| Framework        | React / Vite                                  |
+| Build command    | `npm run build`                               |
+| Output directory | `dist`                                        |
+| Root             | Repository root                               |
+| Node             | `24.16.0` (`.node-version` or `NODE_VERSION`) |
+| Secrets          | None                                          |
+
+Pages provides SPA routing when no root `404.html` exists, so detail URLs can load directly. Verify direct links after any eventual deployment. `public/_headers` applies only on Pages, not Vite's local server. No paid services or public deployment have been added.
+
+References: [Vite](https://vite.dev/guide/), [Tailwind](https://tailwindcss.com/docs/installation/using-vite), [Pages routing](https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering).
