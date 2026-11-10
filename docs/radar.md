@@ -1,13 +1,15 @@
 # Animated research radar
 
-The active homepage component is `SweepRadar.tsx`. It restores the original flat green radar: grid, concentric rings, central DNA icon and a translucent rotating beam. The headline, typography, primary action and homepage structure are unchanged.
+The active homepage component is `SweepRadar.tsx`. It keeps the flat radar geometry: grid, concentric rings, central DNA icon and a translucent rotating beam. The scene is transparent, without a surrounding tile. Cool cyan highlights, a shaded centre and bold name add restrained depth within the graphite theme. The headline, typography, primary action and homepage structure are unchanged.
 
 ## Timing and interaction
 
 - The CSS sweep completes a full revolution every **five seconds**, with no JavaScript frame loop or graphics initialization.
-- Its native `animationiteration` event advances one featured name: **Genomics → Neuroscience → Molecular biology → Genomics**. The readout crossfades over 600ms and the light pulses once. It is illustrative, not live detection.
-- Three ordinary React Router links remain available below the diagram, so students can open a field immediately without waiting for a cycle. The changing decorative readout is hidden from screen readers; link names and URLs stay stable.
-- Pause/resume controls preserve the sweep phase. IntersectionObserver/document visibility pause the animation and prevent pings offscreen or when hidden. Reduced motion shows a static view with all links available.
+- Its native `animationiteration` event advances one featured name: **Genomics → Neuroscience → Molecular biology → Biotechnology → Bioinformatics → Genomics**. The readout crossfades over 600ms and the light pulses once. It is illustrative, not live detection.
+- The field-name icons and lower three-name strip have been removed. One ordinary React Router link wraps the bold current name. Its accessible name matches the active field; keyboard focus pauses the sweep so the destination stays stable. Decorative crossfading copies are hidden from screen readers and do not generate live announcements.
+- **Next research field** selects the next name immediately and pauses automatic motion; it never triggers an automatic-cycle ping. It also works in reduced-motion mode. All five catalogue filters can be reached without waiting for animation.
+- Pausing or manually selecting a field produces a quiet screen-reader announcement. Automatic laps do not generate live announcements. The field link's focus outline stays inside the scene so it is not clipped.
+- Pause/resume controls preserve the sweep phase. IntersectionObserver/document visibility pause the animation and prevent pings offscreen or when hidden. Reduced motion shows a static view with the current link and manual next control available.
 
 ## Sound
 
@@ -17,7 +19,7 @@ Sound defaults off on every new visit. Browser autoplay policies and device outp
 
 ## Retired 3D implementation
 
-The homepage no longer imports `ResearchRadar.tsx` or `radarScene.ts`. The production build has **no Three.js graphics chunk** and creates no canvas/WebGL context. Earlier source/dependency files are retained without being shipped; no files were deleted. The former local fault fixture now shows a retirement message and links back to the homepage.
+The earlier Three.js radar (`ResearchRadar.tsx`, `radarScene.ts`, `radarModel.ts`, its CSS, the `docs/radar-harness.html` fixture) and the `three`/`@types/three` packages were deleted on 10 November 2026. They had not been part of the build since the CSS radar replaced them. The production build creates no canvas/WebGL context.
 
 ## Verification
 

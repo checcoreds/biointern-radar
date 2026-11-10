@@ -1,5 +1,22 @@
 # Verification — 28 October 2026
 
+## Europe-only data refresh and cleanup — 10 November 2026
+
+- Removed the non-European OIST and NUS records. Rechecked statuses/deadlines against official pages, rewrote VBC, ETH, LMU and Karolinska for their 2027 cycles, and added Institut Pasteur, Cambridge, Biozentrum Basel, MPIIB Berlin, CRG and Champalimaud. 15 real records. See [source review](source-review.md).
+- Added `npm run status:report` (read-only status review) and [status update guide](status-updates.md). Added “N days left” hints for open calls closing within 14 days, and featured the soonest open calls on the overview. Added an `Autumn` period for the September–November MPIIB internship.
+- Deleted the retired Three.js radar files, its harness and the `three`/`@types/three` packages.
+- **108 tests passed**; TypeScript/Vite build and formatting checks passed.
+- In the in-app browser: home featured cards, the catalogue (15 cards, country and period filters) and all 15 detail pages at 390px. Each had 6 source disclosures and a 6-step checklist, with no horizontal overflow. Also checked the catalogue at 320px and that an old removed URL shows “Opportunity not found”. No console errors. Not rechecked this pass: 768/1440px layouts, save/checklist persistence and history restoration (code unchanged; covered by tests).
+
+## Graphite theme and five-field radar — 29 October 2026
+
+- Applied the requested graphite/black shaded palette throughout home, catalogue, details, Saved and recovery pages. Added cool cyan and soft violet accents, restrained hero/radar glow and subtle surface depth. Native system typography and practical information sizes remain intact. `night-theme.css` isolates the palette; no dependencies or external assets were added.
+- Removed the radar's coloured tile, field-name icons and lower three-name strip. One bold linked name crossfades per full five-second revolution through Genomics, Neuroscience, Molecular biology, Biotechnology and Bioinformatics. The current destination holds while focused. Manual next-field selection pauses the sweep and announces the selected field; reduced-motion users can reach all five without animation.
+- **99 tests passed** across four files, including new focus-stability and manual-selection regressions. TypeScript/Vite build and formatting checks passed. Existing filters/history, device persistence, source integrity, expandable topics and all 17 detail regressions passed. The build still creates no graphics chunk or WebGL canvas.
+- Inspected home at **320, 390, 768 and 1440px**, with no horizontal overflow. The scene remains transparent and reserves its existing height. Inspected desktop/mobile screenshots and all 17 real/demo details at 320px. Checked expanded filters, demo notices, selected controls, empty Saved and both error routes. A computed text-colour/background audit found no remaining failures in those views after correcting the error-page eyebrow label; gradient checks use CSS endpoints and are not a full accessibility certification.
+- Interactively followed all five field links and confirmed correct query/results: Genomics 1, Neuroscience 3, Molecular biology 5, Biotechnology 2, Bioinformatics 3. Counts refer to the existing real collection. Checked browser Back, keyboard-held link destination, manual field selection, Open + Funded, saved/checklist reload persistence and restored the verification save/task changes.
+- No browser errors or warnings were found. Captured desktop and mobile previews. Narrow-screen checks used browser viewport emulation; reduced motion and audio cleanup are covered by automated tests. No physical touchscreen, screen reader, or acoustic measurement was tested in this pass. Facts and recorded research dates were not changed; the work stays local for review.
+
 ## Card accessibility and evidence contract — 29 October 2026
 
 - **97 tests passed** across four files. TypeScript/Vite build passed. Focused regressions cover expanding/collapsing topic tags with pointer, Enter and Space; visible DAAD/LMU eligibility restrictions; required explicit evidence; invalid/missing field and source dates; source/date mismatches; mixed field dates; and repeated source URLs without React key warnings. Existing search/history, saves, checklist, all 17 details, radar and accessibility regressions passed.

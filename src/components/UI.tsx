@@ -9,7 +9,11 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useId, useState, type MouseEvent } from 'react'
 import type { ApplicationStatus, Opportunity } from '../types/opportunity'
-import { applicationStatus, formatDate } from '../lib/opportunities'
+import {
+  applicationStatus,
+  closingSoonLabel,
+  formatDate,
+} from '../lib/opportunities'
 import { factText } from '../lib/evidence'
 import { useDevice } from '../lib/useDevice'
 import { rememberCatalogue } from '../lib/catalogueNavigation'
@@ -121,6 +125,7 @@ export function OpportunityCard({
   const location = useLocation()
   const navigate = useNavigate()
   const status = applicationStatus(item)
+  const closingSoon = item.isSample ? null : closingSoonLabel(item)
   const detailUrl = `/opportunities/${item.slug}`
   const openDetail = (event: MouseEvent<HTMLAnchorElement>) => {
     if (
@@ -206,6 +211,9 @@ export function OpportunityCard({
             {item.deadline
               ? formatDate(item.deadline)
               : factText(item, 'deadline')}
+            {closingSoon && (
+              <span className="closing-soon"> · {closingSoon}</span>
+            )}
           </dd>
         </div>
         <div>

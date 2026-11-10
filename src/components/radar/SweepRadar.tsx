@@ -1,29 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  Dna,
-  FlaskConical,
-  Microscope,
-  Pause,
-  Play,
-  Volume2,
-  VolumeX,
-} from 'lucide-react'
+import { Dna, ChevronRight, Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { createRadarAudio } from './radarAudio'
 import './sweep-radar.css'
 
 export const sweepFields = [
-  { name: 'Genomics', href: '/opportunities?field=Genomics', Icon: Dna },
+  { name: 'Genomics', href: '/opportunities?field=Genomics' },
   {
     name: 'Neuroscience',
     href: '/opportunities?field=Neuroscience',
-    Icon: Microscope,
   },
   {
     name: 'Molecular biology',
     href: '/opportunities?field=Molecular+biology',
-    Icon: FlaskConical,
   },
+  { name: 'Biotechnology', href: '/opportunities?field=Biotechnology' },
+  { name: 'Bioinformatics', href: '/opportunities?field=Bioinformatics' },
 ] as const
 
 export function SweepRadar() {
@@ -33,6 +25,8 @@ export function SweepRadar() {
   const audioAttempt = useRef(0)
   const [turn, setTurn] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [fieldFocused, setFieldFocused] = useState(false)
+  const [fieldOffset, setFieldOffset] = useState(0)
   const [visible, setVisible] = useState(true)
   const [pageVisible, setPageVisible] = useState(() => !document.hidden)
   const [reduced, setReduced] = useState(
@@ -42,8 +36,8 @@ export function SweepRadar() {
   )
   const [sound, setSound] = useState(false)
   const [soundError, setSoundError] = useState(false)
-  const running = !paused && visible && pageVisible && !reduced
-  const selected = turn % sweepFields.length
+  const running = !paused && !fieldFocused && visible && pageVisible && !reduced
+  const selected = (turn + fieldOffset) % sweepFields.length
 
   useEffect(() => {
     const media =
@@ -144,34 +138,47 @@ export function SweepRadar() {
           <i className="flat-radar-dot dot-one" />
           <i className="flat-radar-dot dot-two" />
         </div>
-        <div className="flat-radar-readout" aria-hidden="true">
-          {sweepFields.map(({ name, Icon }, index) => (
+        <Link
+          className="flat-radar-readout"
+          to={sweepFields[selected].href}
+          aria-label={`Explore ${sweepFields[selected].name.toLowerCase()} internships`}
+          aria-describedby="flat-radar-help"
+          onFocus={() => setFieldFocused(true)}
+          onBlur={() => setFieldFocused(false)}
+        >
+          {sweepFields.map(({ name }, index) => (
             <span
               key={name}
               className="flat-radar-name"
               data-active={selected === index}
+              aria-hidden="true"
             >
-              <Icon size={20} />
               <strong>{name}</strong>
             </span>
           ))}
-        </div>
-        <nav className="flat-radar-links" aria-label="Research fields">
-          {sweepFields.map(({ name, href }, index) => (
-            <Link
-              key={name}
-              to={href}
-              data-active={selected === index}
-              aria-label={`Explore ${name.toLowerCase()} internships`}
-            >
-              {name}
-            </Link>
-          ))}
-        </nav>
+        </Link>
+        <p id="flat-radar-help" className="sr-only">
+          The radar pauses while this link has focus. Use Next research field to
+          choose another field without waiting.
+        </p>
       </div>
       <div className="flat-radar-footer">
         <p id="flat-radar-caption">Illustrative fields · not a live feed</p>
+        <span className="sr-only" aria-live="polite" aria-atomic="true">
+          {paused ? `${sweepFields[selected].name}. Radar paused.` : ''}
+        </span>
         <div className="flat-radar-controls">
+          <button
+            type="button"
+            aria-label="Next research field"
+            title="Next field · pauses the sweep"
+            onClick={() => {
+              setFieldOffset((value) => (value + 1) % sweepFields.length)
+              setPaused(true)
+            }}
+          >
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
           {reduced ? (
             <span className="flat-radar-static">Static view</span>
           ) : (

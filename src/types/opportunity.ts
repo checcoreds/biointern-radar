@@ -3,7 +3,8 @@ export type Category =
 export type ApplicationStatus =
   'Open' | 'Upcoming' | 'Closed' | 'Unknown' | 'No advertised vacancy'
 export type Funding = 'Funded' | 'Partially funded' | 'Unpaid' | 'Unknown'
-export type Period = 'Summer' | 'Academic year' | 'Flexible' | 'Unknown'
+export type Period =
+  'Summer' | 'Autumn' | 'Academic year' | 'Flexible' | 'Unknown'
 export type Degree = 'Bachelor’s' | 'Master’s'
 export type VerificationStatus =
   'Sample' | 'Unverified' | 'Source checked' | 'Needs review'

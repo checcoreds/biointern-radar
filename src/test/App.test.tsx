@@ -273,7 +273,11 @@ describe('Honest information and route coverage', () => {
   it('keeps essential card facts concise and retains the complete detail information', async () => {
     const user = userEvent.setup()
     renderApp('/opportunities')
-    const card = screen.getAllByRole('article')[0]
+    const card = screen
+      .getByRole('link', {
+        name: 'Life Sciences Summer Research Program 2027',
+      })
+      .closest('article')!
     expect(
       card.querySelectorAll('.topic-list > span:not(.extra-topics)'),
     ).toHaveLength(2)
@@ -337,7 +341,7 @@ describe('Honest information and route coverage', () => {
     const lmu = screen
       .getByRole('link', { name: 'LMU Munich Amgen Scholars Programme 2027' })
       .closest('article')!
-    expect(lmu).toHaveTextContent('European Higher Education Area')
+    expect(lmu).toHaveTextContent('University in Europe (EHEA)')
   })
   it('renders repeated source URLs with distinct check dates without React key warnings', async () => {
     const errors = vi.spyOn(console, 'error').mockImplementation(() => {})

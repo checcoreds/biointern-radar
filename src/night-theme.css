@@ -1,0 +1,333 @@
+/* Graphite surfaces, cool light, and restrained depth. Loaded after layout CSS. */
+:root {
+  color-scheme: dark;
+  --page: #0a0d14;
+  --surface: #131a25;
+  --forest: #f0f5fc;
+  --ink: #d7e0ed;
+  --muted: #adb8ca;
+  --mint: #18343f;
+  --line: #30394b;
+  --accent: #9aeaf5;
+  --violet: #cabaff;
+  --control-line: #65758b;
+  --color-forest: #f0f5fc;
+  --color-mint: #18343f;
+  background: var(--page);
+  color: var(--ink);
+}
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 65% 600px at 95% 0, #1c2c3a70, transparent),
+    radial-gradient(ellipse 65% 600px at 0 20%, #24223655, transparent),
+    linear-gradient(155deg, #11151e, #090c12 65%);
+}
+::selection {
+  color: #071018;
+  background: var(--accent);
+}
+:focus-visible {
+  outline-color: var(--accent);
+}
+.skip-link {
+  background: var(--accent);
+  color: #071018;
+}
+.site-header {
+  background: #0d121be8;
+  border-color: var(--line);
+}
+.brand-mark {
+  background: linear-gradient(145deg, #273d4c, #15202e);
+  color: var(--accent);
+  border: 1px solid #547180;
+  box-shadow: inset 0 1px 0 #d5f7ff20;
+}
+.header-inner nav a {
+  color: var(--muted);
+}
+.header-inner nav a:hover,
+.header-inner nav a.active {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.header-cta {
+  color: var(--accent);
+  border-color: #5b7d8a;
+  background: #12232d;
+}
+.header-cta:hover {
+  background: #1c3542;
+}
+.menu-toggle {
+  background: #151e2a;
+  border-color: var(--control-line);
+}
+.header-inner nav.is-open {
+  border-color: var(--line);
+}
+.hero {
+  background: transparent;
+  border-color: var(--line);
+}
+.hero h1 {
+  text-shadow: 0 2px 1px #0005;
+}
+.hero h1 > span {
+  color: var(--accent);
+  text-shadow:
+    0 2px 1px #0008,
+    0 0 38px #79d8ef24;
+}
+.hero-description {
+  color: #b8c6d8;
+}
+.button-dark {
+  color: #09141c;
+  background: linear-gradient(135deg, #aff0f8, #8ccfef);
+  border-color: #b9f4ff;
+  box-shadow:
+    inset 0 1px 0 #fff7,
+    0 6px 25px #77dcf51a;
+}
+.button-dark:hover {
+  color: #071018;
+  background: #c2f7ff;
+  box-shadow: 0 6px 30px #77dcf52a;
+}
+.text-link,
+.back-link,
+.section-sources a,
+.source-list a {
+  color: var(--accent);
+}
+.text-link:hover,
+.back-link:hover,
+.section-sources a:hover,
+.source-list a:hover {
+  color: #dcfaff;
+}
+.how-section {
+  background: #11162288;
+  border-block: 1px solid var(--line);
+}
+.step-top {
+  border-color: var(--line);
+}
+.step-top > span {
+  background: #24233b;
+  color: var(--violet);
+  border-color: #61517e;
+}
+.site-footer {
+  background: #0a0f17;
+  border-color: var(--line);
+  color: var(--muted);
+}
+.footer-right,
+.footer-demo,
+.eyebrow,
+.site-footer p,
+.not-found p,
+.empty-state p,
+.filter-note,
+.filter-heading .reset-button,
+.sort-control label,
+.last-checked,
+.opportunity-card .card-category,
+.panel .eyebrow,
+.detail-field dt,
+.source-list li > span,
+.checklist-progress,
+.checklist-item.checked span {
+  color: var(--muted);
+}
+.opportunity-card,
+.home-cards .opportunity-card,
+.detail-layout .panel,
+.filter-sidebar,
+.empty-state,
+.empty-saved-page .empty-state,
+.opportunity-summary,
+.collection-disclosure p {
+  background: linear-gradient(145deg, #171f2b, #111822);
+  border-color: var(--line);
+  box-shadow:
+    inset 0 1px 0 #e6f4ff06,
+    0 10px 30px #00000014;
+}
+.opportunity-card:hover {
+  border-color: #617d93;
+  box-shadow:
+    inset 0 1px 0 #e6f4ff0a,
+    0 12px 28px #0003;
+}
+.opportunity-card .institution,
+.detail-institution {
+  color: #c6d9eb;
+}
+.card-eligibility-summary,
+.checklist-item,
+.panel p,
+.panel .detail-field dd {
+  color: var(--ink);
+}
+.opportunity-card h3 a svg,
+.panel-title > svg,
+.empty-state > svg {
+  color: var(--accent);
+}
+.opportunity-card .card-bottom,
+.detail-field,
+.section-sources,
+.section-sources li,
+.source-list li,
+.checklist-item,
+.filter-heading {
+  border-color: var(--line);
+}
+.topic-list > span,
+.extra-topics > span,
+.category-badge {
+  color: #c5dcea;
+  background: #20303e;
+  border-color: #42586b;
+}
+.opportunity-card .topic-list .more-topics {
+  color: var(--accent);
+  border-color: var(--control-line);
+}
+.opportunity-card .topic-list .more-topics[aria-expanded='true'] {
+  background: var(--mint);
+}
+.save-button,
+.opportunity-card .save-button.compact-save,
+.reset-checklist {
+  color: #c4d5e8;
+  background: #172230;
+  border-color: var(--control-line);
+}
+.opportunity-card .save-button.compact-save {
+  background: transparent;
+  border-color: transparent;
+}
+.save-button:hover,
+.save-button.is-saved,
+.opportunity-card .compact-save:hover,
+.opportunity-card .compact-save.is-saved {
+  color: var(--accent);
+  background: var(--mint);
+  border-color: #4f8493;
+}
+.status-open {
+  color: #adf2e8;
+  background: #173536;
+  border-color: #3a6967;
+}
+.status-upcoming {
+  color: #d9ccff;
+  background: #2b2540;
+  border-color: #685681;
+}
+.status-closed {
+  color: #f7bed0;
+  background: #382432;
+  border-color: #7b4b62;
+}
+.status-unknown {
+  color: #f2d9a5;
+  background: #362e20;
+  border-color: #796640;
+}
+.status-no-advertised-vacancy {
+  color: #bfd7f4;
+  background: #223044;
+  border-color: #496382;
+}
+.record-badge,
+.record-badge.is-demo,
+.review-notice,
+.sample-notice,
+.storage-warning,
+.inline-note,
+.outreach-note,
+.panel .data-caption {
+  background: #302b20;
+  border-color: #6c5e3d;
+  color: #edd9ac;
+}
+.sample-notice p,
+.inline-note p,
+.panel .data-caption,
+.summary-demo-note,
+.collection-disclosure.is-demo {
+  color: #edd9ac;
+}
+.search-bar,
+.filter-group select,
+.catalogue-toolbar .sort-control select,
+.catalogue-toolbar .mobile-filter-toggle {
+  background: #121b28;
+  border-color: var(--control-line);
+  color: var(--ink);
+}
+.search-bar input {
+  background: transparent;
+  color: var(--ink);
+}
+.search-bar input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+.filter-group select.is-selected,
+.catalogue-toolbar select.is-selected,
+.catalogue-toolbar .mobile-filter-toggle.has-filters,
+.active-filters button {
+  color: #b7f1fa;
+  background: var(--mint);
+  border-color: #578f9e;
+}
+.opportunity-summary {
+  border-left-color: var(--accent);
+}
+.detail-main .official-button {
+  color: var(--accent);
+  background: var(--mint);
+  border-color: #578f9e;
+  box-shadow: none;
+}
+.checklist progress {
+  background: #303c4d;
+}
+progress::-webkit-progress-bar {
+  background: #303c4d;
+}
+progress::-webkit-progress-value {
+  background: var(--accent);
+}
+progress::-moz-progress-bar {
+  background: var(--accent);
+}
+.checklist-item input,
+.hide-closed-control input {
+  accent-color: var(--accent);
+}
+@media (forced-colors: active) {
+  .hero h1 > span,
+  .flat-radar-readout,
+  .button-dark {
+    color: LinkText;
+    text-shadow: none;
+  }
+  .flat-radar-controls button,
+  .button-dark {
+    border: 1px solid ButtonText;
+  }
+}
+
+.card-key-facts .closing-soon {
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}

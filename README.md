@@ -2,7 +2,9 @@
 
 A mobile-friendly starting point for undergraduate life-sciences students comparing research internships and preparing applications.
 
-The default catalogue contains **11 real, official-source records**, initially researched on **28 October 2026**. DAAD RISE eligibility was rechecked on **29 October 2026**; other field dates are unchanged. They include upcoming programmes, open calls, closed past cycles and general lab-enquiry routes. **They are not 11 currently open vacancies.** Six fictional examples remain in a separate **Fictional demos only** collection.
+The default catalogue contains **15 real, official-source records, all in Europe**. They were first researched on 28 October 2026; statuses and deadlines were rechecked and six records added on **10 November 2026**. They include open calls, upcoming calls and general lab-enquiry routes. **They are not 15 guaranteed vacancies.** Six fictional examples remain in a separate **Fictional demos only** collection.
+
+To see which records need their statuses rechecked, run `npm run status:report` and follow [the status update guide](docs/status-updates.md).
 
 ## Preview on this Mac
 
@@ -48,7 +50,9 @@ On mobile, the compact **Main menu** button opens navigation; Escape closes it. 
 
 The overview keeps its radar links and a short three-step guide. Expand **Understand the three opportunity types** for category definitions. Typography uses the device's native system fonts, including Apple's system font on Apple devices; no downloaded font, key or external font service is required. Other devices use their system sans-serif fallback.
 
-The research radar uses a smooth CSS sweep. Every five-second revolution pulses the light and crossfades the featured field (Genomics → Neuroscience → Molecular biology). All three field links remain available. Use the speaker button to enable quiet pings; sound starts only after that click. Pause and reduced-motion preferences stop the animation. It does not use WebGL or load the retired 3D code. See [radar notes](docs/radar.md).
+The interface uses shaded graphite backgrounds with off-white text, icy cyan and soft violet accents. The radar blends into the hero without a separate tile. Gentle shading and highlights add depth; body copy stays free of glow for readability. The palette is isolated in `src/night-theme.css`.
+
+The research radar uses a smooth CSS sweep. Every five-second revolution pulses the light and crossfades one bold field name: Genomics → Neuroscience → Molecular biology → Biotechnology → Bioinformatics. The name is a normal link to filtered results; focusing it holds the destination stable. **Next research field** (the small right arrow) selects immediately and pauses the sweep, so all five fields remain usable with reduced motion or without waiting. Use the speaker button to enable quiet pings; sound starts only after that click. Pause and reduced-motion preferences stop the animation. It does not use WebGL. See [radar notes](docs/radar.md).
 
 ## Honest information labels
 
@@ -62,9 +66,9 @@ The research radar uses a smooth CSS sweep. Every five-second revolution pulses 
 | No advertised vacancy    | A general lab-enquiry route, with no specific opening confirmed. This differs from an unknown application status.                             |
 | Fictional demo           | A made-up UI fixture, not factual internship information.                                                                                     |
 
-See [the source review](docs/source-review.md) for the complete collection and caveats. In particular, the VBC page does not name a cycle year, ETH pages disagree about a deadline time zone, and NUS has conflicting opening dates. Those fields stay explicitly unresolved. The KI entry is the published, closed **2026** cycle, not a claimed 2027 opening.
+See [the source review](docs/source-review.md) for the complete collection, caveats and a watch list of programmes not yet added. In particular, ETH pages disagree about a deadline time zone and Karolinska's own Amgen page was unavailable, so those fields stay explicitly unresolved.
 
-Application statuses are manual snapshots. The app can conservatively close an elapsed published deadline when rendering; it never infers an open call merely because a deadline is in the future. No automatic research or scheduled verification is running.
+Application statuses are manual snapshots. The app can conservatively close an elapsed published deadline when rendering; it never infers an open call merely because a deadline is in the future. Open calls closing within 14 days show a “N days left” hint on their card, and the overview features the open calls with the soonest deadlines. No automatic research or scheduled verification is running.
 
 ## Run project checks
 
@@ -72,11 +76,13 @@ Application statuses are manual snapshots. The app can conservatively close an e
 npm test
 npm run build
 npm run format:check
+npm run status:report
 ```
 
 - **Tests** cover rapid combined changes, URL/history controls, catalogue scroll return, all record pages, save/unsave and per-record checklist persistence, corrupt/blocked storage, evidence, sorting, deadlines and accessibility structure.
 - **Build** checks TypeScript, then writes optimised static files to `dist/`.
 - **Formatting check** reports inconsistent source formatting without changing files. `npm run format` formats them.
+- **Status report** lists which real records need their official sources rechecked (deadline passed, closing soon, stale or unclear). It is read-only and offline. Add `-- --json` for machine-readable output.
 - `npm run test:watch` repeats tests while editing; press `q` to exit.
 - `npm run preview` serves an existing build at **http://127.0.0.1:4173/**. It does not deploy anything.
 
@@ -95,6 +101,8 @@ src/
   lib/opportunities.ts          Repository, filtering, sorting, status and dates
   lib/evidence.ts               Honest field labels and evidence lookup
   lib/defineRealOpportunity.ts   Required explicit evidence and date validation
+  lib/evidenceHelpers.ts        Shorthand for explicit evidence entries
+  lib/statusReview.ts           Which records need a status recheck
   lib/useCatalogueQuery.ts       Safe accumulating URL changes
   lib/catalogueNavigation.ts     Validated catalogue-return context
   lib/device.tsx                Shared state provider for saves/checklists
@@ -104,8 +112,11 @@ src/
   components/                   Shared cards, notices and checklist
   components/radar/             CSS radar, field links and opt-in synthesised audio
   pages/                        Home, catalogue/saved, detail pages
+  night-theme.css               Graphite palette, accessible surfaces and accents
   test/                         Behavioural, data and accessibility regressions
-docs/source-review.md            Source audit and unresolved facts
+docs/source-review.md            Source audit, review log and unresolved facts
+docs/status-updates.md           How to refresh statuses and deadlines
+scripts/status-report.mjs        Prints the status review (npm run status:report)
 public/_headers                 Security headers for Cloudflare Pages
 .github/workflows/ci.yml         Build and test checks; no deployment
 AGENTS.md                        Project conventions

@@ -14,7 +14,11 @@ import {
   safeSourceUrl,
   sortOpportunities,
   applicationStatus,
+  closingSoonLabel,
+  daysUntil,
+  featuredOpportunities,
 } from '../lib/opportunities'
+import { reviewStatuses } from '../lib/statusReview'
 
 describe('Catalogue filtering', () => {
   it('combines topic and funding constraints', () => {
@@ -166,31 +170,35 @@ describe('Real records and practical sorting', () => {
         (item) => item.id === 'embl-undergraduate-outreach',
       )!,
       realOpportunities.find((item) => item.id === 'epfl-srp-2027')!,
-      realOpportunities.find((item) => item.id === 'oist-spring-2027')!,
+      realOpportunities.find(
+        (item) => item.id === 'biozentrum-research-summer-2027',
+      )!,
     ]
     expect(
       sortOpportunities(items, 'deadline-asc').map((item) => item.id),
     ).toEqual([
-      'oist-spring-2027',
       'epfl-srp-2027',
+      'biozentrum-research-summer-2027',
       'embl-undergraduate-outreach',
     ])
     expect(
       sortOpportunities(items, 'deadline-desc').map((item) => item.id),
     ).toEqual([
+      'biozentrum-research-summer-2027',
       'epfl-srp-2027',
-      'oist-spring-2027',
       'embl-undergraduate-outreach',
     ])
   })
-  it('hides closed calls without hiding an unknown status or inventing a vacancy', () => {
+  it('hides closed calls without hiding upcoming calls or inventing a vacancy', () => {
     const results = filterOpportunities(
       realOpportunities,
       { ...emptyFilters, hideClosed: true },
-      new Date('2026-10-28T12:00:00Z'),
+      new Date('2026-11-20T12:00:00Z'),
     )
-    expect(results.some((item) => item.id === 'ki-amgen-2026')).toBe(false)
-    expect(results.some((item) => item.id === 'nus-amgen-2027')).toBe(true)
+    expect(results.some((item) => item.id === 'epfl-srp-2027')).toBe(false)
+    expect(
+      results.some((item) => item.id === 'biozentrum-research-summer-2027'),
+    ).toBe(true)
     expect(
       results.some((item) => item.id === 'embl-undergraduate-outreach'),
     ).toBe(true)
@@ -200,9 +208,11 @@ describe('Real records and practical sorting', () => {
     expect(applicationStatus(epfl, new Date('2026-11-16T01:00:00Z'))).toBe(
       'Closed',
     )
-    const nus = realOpportunities.find((item) => item.id === 'nus-amgen-2027')!
-    expect(applicationStatus(nus, new Date('2026-10-28T12:00:00Z'))).toBe(
-      'Unknown',
+    const basel = realOpportunities.find(
+      (item) => item.id === 'biozentrum-research-summer-2027',
+    )!
+    expect(applicationStatus(basel, new Date('2027-01-10T12:00:00Z'))).toBe(
+      'Upcoming',
     )
   })
 })
@@ -262,12 +272,13 @@ describe('Explicit verification contract', () => {
     record.sources.push({
       title: 'Funding recheck',
       url,
-      checkedAt: '2026-10-29',
+      checkedAt: '2026-11-12',
     })
-    record.evidence.funding.checkedAt = '2026-10-29'
+    record.evidence.funding.checkedAt = '2026-11-12'
     const result = defineRealOpportunity(record)
-    expect(result.lastVerifiedDate).toBe('2026-10-29')
-    expect(result.evidence!.deadline!.checkedAt).toBe('2026-10-28')
+    expect(result.lastVerifiedDate).toBe('2026-11-12')
+    expect(result.evidence!.deadline!.checkedAt).toBe('2026-11-10')
+    expect(result.evidence!.country!.checkedAt).toBe('2026-10-28')
   })
   it('rechecks DAAD eligibility without claiming a new check for unrelated fields', () => {
     const rise = realOpportunities.find(
@@ -292,4 +303,54 @@ it('finds a multi-country placement under each officially listed host country', 
       ),
     ).toBe(true)
   }
+})
+
+describe('Deadline hints and status review', () => {
+  const epfl = realOpportunities.find((item) => item.id === 'epfl-srp-2027')!
+  it('counts whole days to a date-only deadline', () => {
+    expect(daysUntil('2026-11-15', new Date('2026-11-10T22:00:00Z'))).toBe(5)
+    expect(daysUntil('2026-11-15', new Date('2026-11-15T08:00:00Z'))).toBe(0)
+  })
+  it('only labels open calls closing within two weeks', () => {
+    expect(closingSoonLabel(epfl, new Date('2026-11-10T12:00:00Z'))).toBe(
+      '5 days left',
+    )
+    expect(closingSoonLabel(epfl, new Date('2026-10-20T12:00:00Z'))).toBeNull()
+    expect(closingSoonLabel(epfl, new Date('2026-11-16T12:00:00Z'))).toBeNull()
+    const basel = realOpportunities.find(
+      (item) => item.id === 'biozentrum-research-summer-2027',
+    )!
+    expect(closingSoonLabel(basel, new Date('2027-02-20T12:00:00Z'))).toBeNull()
+  })
+  it('features open calls with the soonest deadlines', () => {
+    const featured = featuredOpportunities(
+      realOpportunities,
+      3,
+      new Date('2026-11-10T12:00:00Z'),
+    )
+    expect(featured.map((item) => item.id)[0]).toBe('epfl-srp-2027')
+    expect(
+      featured.every(
+        (item) =>
+          applicationStatus(item, new Date('2026-11-10T12:00:00Z')) === 'Open',
+      ),
+    ).toBe(true)
+  })
+  it('flags elapsed deadlines and stale checks without changing records', () => {
+    const before = JSON.stringify(realOpportunities)
+    const reviews = reviewStatuses(
+      realOpportunities,
+      new Date('2026-12-20T12:00:00Z'),
+    )
+    expect(JSON.stringify(realOpportunities)).toBe(before)
+    const epflReview = reviews.find((review) => review.id === 'epfl-srp-2027')!
+    expect(epflReview.priority).toBe('urgent')
+    expect(epflReview.displayedStatus).toBe('Closed')
+    expect(epflReview.storedStatus).toBe('Open')
+    expect(reviews[0].priority).toBe('urgent')
+    expect(reviews.every((review) => review.sources.length > 0)).toBe(true)
+  })
+  it('excludes fictional demos from the status review', () => {
+    expect(reviewStatuses(sampleOpportunities)).toEqual([])
+  })
 })

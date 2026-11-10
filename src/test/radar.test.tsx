@@ -18,21 +18,28 @@ function revolution() {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('Flat animated research radar', () => {
-  it('keeps all three field links available without canvas or graphics support', () => {
+  it('exposes one current field link and cycles through all five real catalogue URLs', () => {
     renderRadar()
-    for (const field of sweepFields)
+    for (const field of sweepFields) {
       expect(
         screen.getByRole('link', {
           name: `Explore ${field.name.toLowerCase()} internships`,
         }),
       ).toHaveAttribute('href', field.href)
+      expect(screen.getAllByRole('link')).toHaveLength(1)
+      revolution()
+    }
+    expect(document.querySelector('.flat-radar-links')).not.toBeInTheDocument()
+    expect(
+      document.querySelector('.flat-radar-readout svg'),
+    ).not.toBeInTheDocument()
     expect(document.querySelector('canvas')).not.toBeInTheDocument()
     expect(document.querySelector('.flat-radar')).toHaveAttribute(
       'data-running',
       'true',
     )
   })
-  it('advances exactly once per complete sweep and cycles through the three names', () => {
+  it('advances exactly once per complete sweep and cycles through the five names', () => {
     renderRadar()
     const radar = document.querySelector('.flat-radar')!
     expect(radar).toHaveAttribute('data-field', 'Genomics')
@@ -41,8 +48,60 @@ describe('Flat animated research radar', () => {
     revolution()
     expect(radar).toHaveAttribute('data-field', 'Molecular biology')
     revolution()
+    expect(radar).toHaveAttribute('data-field', 'Biotechnology')
+    revolution()
+    expect(radar).toHaveAttribute('data-field', 'Bioinformatics')
+    revolution()
     expect(radar).toHaveAttribute('data-field', 'Genomics')
-    expect(radar).toHaveAttribute('data-turn', '3')
+    expect(radar).toHaveAttribute('data-turn', '5')
+  })
+  it('holds the link destination while it has keyboard focus', async () => {
+    const user = userEvent.setup()
+    renderRadar()
+    await user.tab()
+    const link = screen.getByRole('link', {
+      name: 'Explore genomics internships',
+    })
+    expect(link).toHaveFocus()
+    revolution()
+    expect(link).toHaveAttribute('href', '/opportunities?field=Genomics')
+    expect(document.querySelector('.flat-radar')).toHaveAttribute(
+      'data-running',
+      'false',
+    )
+    await user.tab()
+    revolution()
+    expect(document.querySelector('.flat-radar')).toHaveAttribute(
+      'data-field',
+      'Neuroscience',
+    )
+  })
+  it('lets users choose the next field immediately and holds it until resumed', async () => {
+    const user = userEvent.setup()
+    renderRadar()
+    for (const field of [...sweepFields.slice(1), sweepFields[0]]) {
+      await user.click(
+        screen.getByRole('button', { name: 'Next research field' }),
+      )
+      expect(screen.getByRole('link')).toHaveAttribute('href', field.href)
+      revolution()
+      expect(document.querySelector('.flat-radar')).toHaveAttribute(
+        'data-field',
+        field.name,
+      )
+      expect(screen.getByText(`${field.name}. Radar paused.`)).toHaveAttribute(
+        'aria-live',
+        'polite',
+      )
+    }
+    await user.click(
+      screen.getByRole('button', { name: 'Resume radar animation' }),
+    )
+    revolution()
+    expect(document.querySelector('.flat-radar')).toHaveAttribute(
+      'data-field',
+      'Neuroscience',
+    )
   })
   it('pauses the sweep and field cycle, then resumes without a timer race', async () => {
     const user = userEvent.setup()
@@ -68,7 +127,8 @@ describe('Flat animated research radar', () => {
       '1',
     )
   })
-  it('uses a static view for reduced motion while keeping all field links', () => {
+  it('uses a static view for reduced motion with manual access to all five fields', async () => {
+    const user = userEvent.setup()
     vi.stubGlobal(
       'matchMedia',
       vi.fn(() => ({
@@ -79,7 +139,7 @@ describe('Flat animated research radar', () => {
     )
     renderRadar()
     expect(screen.getByText('Static view')).toBeVisible()
-    expect(screen.getAllByRole('link')).toHaveLength(3)
+    expect(screen.getAllByRole('link')).toHaveLength(1)
     expect(
       screen.queryByRole('button', { name: 'Pause radar animation' }),
     ).not.toBeInTheDocument()
@@ -88,6 +148,16 @@ describe('Flat animated research radar', () => {
       'data-turn',
       '0',
     )
+    for (const field of [...sweepFields.slice(1), sweepFields[0]]) {
+      await user.click(
+        screen.getByRole('button', { name: 'Next research field' }),
+      )
+      expect(screen.getByRole('link')).toHaveAttribute('href', field.href)
+      expect(document.querySelector('.flat-radar')).toHaveAttribute(
+        'data-running',
+        'false',
+      )
+    }
   })
   it('stops advancing when the document is hidden', () => {
     renderRadar()
@@ -164,7 +234,7 @@ describe('Flat animated research radar', () => {
       'data-field',
       'Neuroscience',
     )
-    expect(screen.getAllByRole('link')).toHaveLength(3)
+    expect(screen.getAllByRole('link')).toHaveLength(1)
   })
   it('closes a pending audio context if navigation happens before audio resumes', async () => {
     let resume!: () => void

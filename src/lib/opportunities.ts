@@ -51,6 +51,43 @@ export function applicationStatus(
   return item.applicationStatus
 }
 
+/** Whole calendar days from today (UTC) until a date-only deadline. */
+export function daysUntil(date: string, now = new Date()): number {
+  const target = Date.parse(`${date.slice(0, 10)}T00:00:00Z`)
+  const today = Date.parse(`${now.toISOString().slice(0, 10)}T00:00:00Z`)
+  return Math.round((target - today) / 86_400_000)
+}
+
+/** Short urgency hint for an open call closing within two weeks. */
+export function closingSoonLabel(
+  item: Opportunity,
+  now = new Date(),
+): string | null {
+  if (!item.deadline || applicationStatus(item, now) !== 'Open') return null
+  const days = daysUntil(item.deadline, now)
+  if (days < 0 || days > 14) return null
+  if (days === 0) return 'Closes today'
+  return days === 1 ? '1 day left' : `${days} days left`
+}
+
+/** Open calls first (soonest deadline), then upcoming ones, for the overview. */
+export function featuredOpportunities(
+  items: readonly Opportunity[],
+  count = 3,
+  now = new Date(),
+): Opportunity[] {
+  const byDeadline = (status: ApplicationStatus) =>
+    sortOpportunities(
+      items.filter((item) => applicationStatus(item, now) === status),
+      'deadline-asc',
+    )
+  const picks = [...byDeadline('Open'), ...byDeadline('Upcoming')]
+  return (picks.length ? picks : sortOpportunities(items, 'recommended')).slice(
+    0,
+    count,
+  )
+}
+
 export function filterOpportunities(
   items: readonly Opportunity[],
   filters: Filters,

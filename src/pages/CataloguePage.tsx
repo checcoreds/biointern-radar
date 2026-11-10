@@ -86,7 +86,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
     {
       key: 'period',
       label: 'Approximate period',
-      options: ['Summer', 'Academic year', 'Flexible', 'Unknown'],
+      options: ['Summer', 'Autumn', 'Academic year', 'Flexible', 'Unknown'],
     },
     {
       key: 'category',

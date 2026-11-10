@@ -2,7 +2,10 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import { SweepRadar } from '../components/radar/SweepRadar'
 import { Link } from 'react-router-dom'
 import { OpportunityCard, CollectionNotice } from '../components/UI'
-import { opportunityRepository } from '../lib/opportunities'
+import {
+  featuredOpportunities,
+  opportunityRepository,
+} from '../lib/opportunities'
 
 const steps = [
   {
@@ -60,12 +63,9 @@ export function HomePage() {
         </div>
         <CollectionNotice />
         <div className="cards-grid home-cards">
-          {opportunityRepository
-            .list()
-            .slice(0, 3)
-            .map((item) => (
-              <OpportunityCard key={item.id} opportunity={item} />
-            ))}
+          {featuredOpportunities(opportunityRepository.list()).map((item) => (
+            <OpportunityCard key={item.id} opportunity={item} />
+          ))}
         </div>
       </section>
       <section id="how-it-works" className="how-section">
