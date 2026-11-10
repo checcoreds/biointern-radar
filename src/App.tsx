@@ -1,5 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowRight, ArrowUpRight, Bookmark, Menu, X } from 'lucide-react'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Bookmark,
+  Menu,
+  Moon,
+  Sun,
+  X,
+} from 'lucide-react'
 import {
   Link,
   NavLink,
@@ -16,6 +24,7 @@ import { opportunityRepository } from './lib/opportunities'
 import { DeviceProvider } from './lib/device'
 import { useDevice } from './lib/useDevice'
 import { getCatalogueReturn } from './lib/catalogueNavigation'
+import { useTheme } from './lib/theme'
 
 const scrollPositions = new Map<string, number>()
 function storedScroll(key: string): number | undefined {
@@ -104,6 +113,8 @@ function RouteEffects() {
 }
 function Shell() {
   const { data, storageWarning } = useDevice()
+  const { pathname } = useLocation()
+  const { theme, toggle: toggleTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
@@ -126,6 +137,23 @@ function Shell() {
       <header className="site-header">
         <div className="container header-inner">
           <Brand />
+          <button
+            type="button"
+            className="theme-toggle"
+            aria-label={
+              theme === 'dark'
+                ? 'Switch to light theme'
+                : 'Switch to dark theme'
+            }
+            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+            onClick={toggleTheme}
+          >
+            {theme === 'dark' ? (
+              <Sun size={20} aria-hidden="true" />
+            ) : (
+              <Moon size={20} aria-hidden="true" />
+            )}
+          </button>
           <button
             ref={menuButton}
             className="menu-toggle"
@@ -177,26 +205,28 @@ function Shell() {
         </p>
       )}
       <main id="main-content" tabIndex={-1}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/opportunities" element={<CataloguePage />} />
-          <Route path="/saved" element={<CataloguePage savedOnly />} />
-          <Route path="/opportunities/:slug" element={<OpportunityPage />} />
-          <Route
-            path="*"
-            element={
-              <div className="container not-found">
-                <span className="eyebrow">OFF THE RADAR · 404</span>
-                <h1>This page hasn’t been mapped.</h1>
-                <p>Let’s get you back to exploring research pathways.</p>
-                <Link className="button button-dark" to="/opportunities">
-                  Explore internships
-                  <ArrowRight size={17} aria-hidden="true" />
-                </Link>
-              </div>
-            }
-          />
-        </Routes>
+        <div className="page-enter" key={pathname}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/opportunities" element={<CataloguePage />} />
+            <Route path="/saved" element={<CataloguePage savedOnly />} />
+            <Route path="/opportunities/:slug" element={<OpportunityPage />} />
+            <Route
+              path="*"
+              element={
+                <div className="container not-found">
+                  <span className="eyebrow">OFF THE RADAR · 404</span>
+                  <h1>This page hasn’t been mapped.</h1>
+                  <p>Let’s get you back to exploring research pathways.</p>
+                  <Link className="button button-dark" to="/opportunities">
+                    Explore internships
+                    <ArrowRight size={17} aria-hidden="true" />
+                  </Link>
+                </div>
+              }
+            />
+          </Routes>
+        </div>
       </main>
       <footer className="site-footer">
         <div className="container footer-inner">

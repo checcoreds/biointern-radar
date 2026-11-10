@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   CircleHelp,
+  FileText,
   ShieldCheck,
   Link2,
 } from 'lucide-react'
@@ -16,6 +17,7 @@ import {
 } from '../lib/opportunities'
 import { evidenceFor, evidenceLabels, factText } from '../lib/evidence'
 import { getCatalogueReturn } from '../lib/catalogueNavigation'
+import { OPPORTUNITY_TRANSITION } from '../lib/viewTransition'
 import type { FactKey, Opportunity } from '../types/opportunity'
 
 const fieldLabels: Record<FactKey, string> = {
@@ -131,7 +133,10 @@ export function OpportunityPage() {
           : 'the catalogue'}
       </Link>
       {item.isSample && <SampleNotice compact />}
-      <div className="detail-heading">
+      <div
+        className="detail-heading"
+        style={{ viewTransitionName: OPPORTUNITY_TRANSITION }}
+      >
         <div className="detail-badges">
           {(item.isSample || item.verificationStatus === 'Needs review') && (
             <span className={`record-badge ${item.isSample ? 'is-demo' : ''}`}>
@@ -233,6 +238,12 @@ export function OpportunityPage() {
           <section className="panel">
             <span className="eyebrow">02 / Eligibility</span>
             <h2>Am I eligible?</h2>
+            {item.eligibilitySummary && (
+              <p className="eligibility-highlight">
+                <strong>Key restrictions: </strong>
+                {factText(item, 'eligibilitySummary')}
+              </p>
+            )}
             <dl className="detail-fields">
               <FactField
                 item={item}
@@ -258,6 +269,7 @@ export function OpportunityPage() {
             <SectionSources
               item={item}
               fields={[
+                'eligibilitySummary',
                 'eligibleDegrees',
                 'yearOfStudyRequirement',
                 'gpaRequirement',
@@ -328,11 +340,23 @@ export function OpportunityPage() {
             <span className="eyebrow">05 / Application materials</span>
             <h2>What must I prepare?</h2>
             <dl>
-              <FactField
-                item={item}
-                field="requiredDocuments"
-                label="Documents stated in the checked source"
-              />
+              <div className="detail-field">
+                <dt>Documents stated in the checked source</dt>
+                <dd>
+                  {item.requiredDocuments?.length ? (
+                    <ul className="document-list">
+                      {item.requiredDocuments.map((document) => (
+                        <li key={document}>
+                          <FileText size={17} aria-hidden="true" />
+                          <span>{document}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    factText(item, 'requiredDocuments')
+                  )}
+                </dd>
+              </div>
             </dl>
             <SectionSources item={item} fields={['requiredDocuments']} />
           </section>

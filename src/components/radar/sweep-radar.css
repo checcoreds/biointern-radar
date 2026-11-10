@@ -16,8 +16,15 @@
   inset: 0;
   mask-image: radial-gradient(ellipse, #000 15%, transparent 68%);
   background-image:
-    linear-gradient(#8ce8f50c 1px, transparent 1px),
-    linear-gradient(90deg, #8ce8f50c 1px, transparent 1px);
+    linear-gradient(
+      color-mix(in srgb, var(--radar) 5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--radar) 5%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 32px 32px;
 }
 .flat-radar-dial {
@@ -30,7 +37,7 @@
 }
 .flat-radar-ring {
   position: absolute;
-  border: 1px solid #75c7df42;
+  border: 1px solid color-mix(in srgb, var(--radar) 26%, transparent);
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -50,7 +57,7 @@
 }
 .flat-radar-axis {
   position: absolute;
-  background: #86dce51a;
+  background: color-mix(in srgb, var(--radar) 10%, transparent);
 }
 .flat-radar-axis.axis-horizontal {
   height: 1px;
@@ -71,9 +78,9 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg 265deg,
-    #8ce8f505 290deg,
-    #67dbef25 335deg,
-    #8ce8f57a 359deg,
+    color-mix(in srgb, var(--radar) 2%, transparent) 290deg,
+    color-mix(in srgb, var(--radar) 15%, transparent) 335deg,
+    color-mix(in srgb, var(--radar) 48%, transparent) 359deg,
     transparent 360deg
   );
   animation: flat-radar-turn 5s linear infinite;
@@ -86,8 +93,11 @@
   left: 50%;
   width: 1px;
   height: 50%;
-  background: linear-gradient(#baf4ff, #8ce8f515);
-  box-shadow: 0 0 7px #7cecff88;
+  background: linear-gradient(
+    var(--radar-strong),
+    color-mix(in srgb, var(--radar) 8%, transparent)
+  );
+  box-shadow: 0 0 7px color-mix(in srgb, var(--radar) 53%, transparent);
 }
 .flat-radar-centre {
   position: absolute;
@@ -97,13 +107,17 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 25%, #233e4b, #0d1520 75%);
-  color: #a9f1fa;
-  border: 1px solid #7ddced60;
+  background: radial-gradient(
+    circle at 35% 25%,
+    var(--radar-core-a),
+    var(--radar-core-b) 75%
+  );
+  color: var(--radar-strong);
+  border: 1px solid color-mix(in srgb, var(--radar) 38%, transparent);
   box-shadow:
-    inset 0 1px 1px #c6fbff20,
-    0 12px 28px #0008,
-    0 0 30px #7cecff12;
+    inset 0 1px 1px #ffffff20,
+    0 12px 28px var(--radar-shadow),
+    0 0 30px color-mix(in srgb, var(--radar) 7%, transparent);
   display: grid;
   place-items: center;
 }
@@ -114,15 +128,15 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #8ce8f5;
-  box-shadow: 0 0 0 4px #8ce8f520;
+  background: var(--radar);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--radar) 13%, transparent);
   animation: flat-radar-light 1.5s ease-out both;
 }
 .flat-radar-ping::after {
   content: '';
   position: absolute;
   inset: -9px;
-  border: 1px solid #a5f5ff;
+  border: 1px solid var(--radar-strong);
   border-radius: 50%;
   animation: flat-radar-echo 1.5s ease-out both;
 }
@@ -131,7 +145,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #77b8c4;
+  background: var(--radar-dim);
 }
 .flat-radar-dot.dot-one {
   top: 65%;
@@ -148,12 +162,12 @@
   transform: translateX(-50%);
   width: min(100%, 290px);
   height: 54px;
-  border-radius: 8px;
-  color: #c9f6ff;
+  border-radius: var(--radius-lg);
+  color: var(--forest);
   text-decoration: none;
 }
 .flat-radar-readout:hover {
-  color: #fff;
+  color: var(--accent);
 }
 .flat-radar-readout:focus-visible {
   outline-offset: -3px;
@@ -172,8 +186,8 @@
   font-size: clamp(21px, 2vw, 25px);
   letter-spacing: -0.6px;
   text-shadow:
-    0 1px 1px #000,
-    0 0 24px #8ce8f530;
+    0 1px 1px var(--radar-text-shadow),
+    0 0 24px color-mix(in srgb, var(--radar) 19%, transparent);
   opacity: 0;
   transform: translateY(4px);
   transition:
@@ -199,7 +213,7 @@
   margin: 0;
   font-size: 12px;
   line-height: 1.5;
-  color: #a4afc0;
+  color: var(--muted);
 }
 .flat-radar-controls {
   display: flex;
@@ -213,16 +227,16 @@
   min-width: 44px;
   min-height: 44px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: #b7d4df;
+  color: var(--muted-strong);
 }
 .flat-radar-controls button:hover,
 .flat-radar-controls button[aria-pressed='true'] {
-  background: #18343f;
+  background: var(--mint);
 }
 .flat-radar-audio-note {
-  color: #a4afc0;
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
   margin: 0;
@@ -242,12 +256,12 @@
 }
 @keyframes flat-radar-light {
   0% {
-    background: #e5fcff;
-    box-shadow: 0 0 16px 5px #7cecff88;
+    background: var(--radar-strong);
+    box-shadow: 0 0 16px 5px color-mix(in srgb, var(--radar) 53%, transparent);
   }
   100% {
-    background: #8ce8f5;
-    box-shadow: 0 0 0 4px #8ce8f520;
+    background: var(--radar);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--radar) 13%, transparent);
   }
 }
 @keyframes flat-radar-echo {

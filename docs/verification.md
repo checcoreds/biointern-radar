@@ -1,5 +1,18 @@
 # Verification — 28 October 2026
 
+## Blue light/dark themes — 10 November 2026
+
+- Replaced the green palette with blue light and dark themes and a header sun/moon toggle. Converted about 200 hard-coded colours in the base CSS, the radar and the animations to shared theme tokens. Required documents now show as a list.
+- **110 tests passed** (including theme toggle persistence and blocked storage); build and formatting passed.
+- Browser: home, catalogue and detail pages in both themes at desktop width, and the catalogue header with the toggle at 320px. No overflow and no console errors. A computed text-contrast sweep of home, catalogue, two details and Saved in both themes found no failures; the only flags were gradient buttons the script cannot measure (white on #2f6df0 is about 4.9:1). Not tested: the device-follow mode on a real dark-mode phone, or screen readers.
+
+## Minimal cards, green theme and motion — 10 November 2026
+
+- Cards now show status, title, institution, country, deadline and funding; eligibility moved to a “Key restrictions” highlight on the detail page. Removed about 19 KB of CSS for the old cards and other unused selectors.
+- New deep-green palette, rounder shapes and `motion.css` animations: page entry, card cascade/hover, bookmark pop, filter chips, detail sections and the card-to-detail View Transition.
+- **108 tests passed**; build and formatting passed.
+- Browser: catalogue, home and detail at 1440px, plus the card-to-detail morph on Pasteur. All 15 detail pages at 320px with Back to the catalogue. The mobile filter panel and Show results focus. Home, catalogue, Saved and 404 at 768px. No horizontal overflow and no console errors. Not checked: physical devices, screen readers, the reduced-motion setting in a real browser (CSS-gated), and Safari/Firefox View Transition support (they fall back to plain navigation).
+
 ## Europe-only data refresh and cleanup — 10 November 2026
 
 - Removed the non-European OIST and NUS records. Rechecked statuses/deadlines against official pages, rewrote VBC, ETH, LMU and Karolinska for their 2027 cycles, and added Institut Pasteur, Cambridge, Biozentrum Basel, MPIIB Berlin, CRG and Champalimaud. 15 real records. See [source review](source-review.md).

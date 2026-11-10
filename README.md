@@ -46,11 +46,11 @@ export PATH="$HOME/.nvm/versions/node/v24.16.0/bin:$PATH"
 
 Each detail answers: **what will I do, am I eligible, when does it happen, what does it cost, what must I prepare, and how do I apply?** A summary near the title shows deadline, duration, funding and the official-source link. Expand **Sources & notes** within a section for its field evidence and check dates. General checklists do not override provider requirements.
 
-On mobile, the compact **Main menu** button opens navigation; Escape closes it. Catalogue cards prioritise deadline, funding and eligibility, including key university-country, study-year or other restrictions. These highlights are not the complete eligibility rules: always read the detail and official source. Cards initially show two topic tags; tap **+N more** (or use Enter/Space) to reveal the others, then **Show fewer** to collapse them. An empty Saved page shows its message and Explore button immediately; search, filters and sorting appear once an opportunity is saved.
+On mobile, the compact **Main menu** button opens navigation; Escape closes it. Catalogue cards are kept minimal: status, title, institution, country, deadline and funding. The whole card opens the detail page. Eligibility (with a **Key restrictions** highlight), research topics and source dates are on the detail page; always read it and the official source. An empty Saved page shows its message and Explore button immediately; search, filters and sorting appear once an opportunity is saved.
 
 The overview keeps its radar links and a short three-step guide. Expand **Understand the three opportunity types** for category definitions. Typography uses the device's native system fonts, including Apple's system font on Apple devices; no downloaded font, key or external font service is required. Other devices use their system sans-serif fallback.
 
-The interface uses shaded graphite backgrounds with off-white text, icy cyan and soft violet accents. The radar blends into the hero without a separate tile. Gentle shading and highlights add depth; body copy stays free of glow for readability. The palette is isolated in `src/night-theme.css`.
+The interface has a **light theme** (white and soft blue) and a **dark theme** (deep navy). It follows the device's setting until you choose one with the sun/moon button in the header; the choice is remembered in this browser. Controls are rounded and pill-shaped. Pages rise in on navigation, cards cascade in and lift on hover, and in supporting browsers a clicked card morphs into the detail page heading. Saving, filter chips and checklist ticks have small animations. All motion is in `src/motion.css` and switches off when the device asks for reduced motion. Both palettes, as colour tokens, and the card design are in `src/night-theme.css`.
 
 The research radar uses a smooth CSS sweep. Every five-second revolution pulses the light and crossfades one bold field name: Genomics → Neuroscience → Molecular biology → Biotechnology → Bioinformatics. The name is a normal link to filtered results; focusing it holds the destination stable. **Next research field** (the small right arrow) selects immediately and pauses the sweep, so all five fields remain usable with reduced motion or without waiting. Use the speaker button to enable quiet pings; sound starts only after that click. Pause and reduced-motion preferences stop the animation. It does not use WebGL. See [radar notes](docs/radar.md).
 
@@ -103,6 +103,8 @@ src/
   lib/defineRealOpportunity.ts   Required explicit evidence and date validation
   lib/evidenceHelpers.ts        Shorthand for explicit evidence entries
   lib/statusReview.ts           Which records need a status recheck
+  lib/viewTransition.ts         Card-to-detail morph with a plain fallback
+  lib/theme.ts                  Light/dark choice and device-preference fallback
   lib/useCatalogueQuery.ts       Safe accumulating URL changes
   lib/catalogueNavigation.ts     Validated catalogue-return context
   lib/device.tsx                Shared state provider for saves/checklists
@@ -112,7 +114,8 @@ src/
   components/                   Shared cards, notices and checklist
   components/radar/             CSS radar, field links and opt-in synthesised audio
   pages/                        Home, catalogue/saved, detail pages
-  night-theme.css               Graphite palette, accessible surfaces and accents
+  night-theme.css               Light/dark blue palettes, radius tokens and card design
+  motion.css                    Page, card and detail animations (reduced-motion safe)
   test/                         Behavioural, data and accessibility regressions
 docs/source-review.md            Source audit, review log and unresolved facts
 docs/status-updates.md           How to refresh statuses and deadlines

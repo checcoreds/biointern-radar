@@ -2,9 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
+import { applyStoredTheme } from './lib/theme'
 import './styles.css'
 import './refinements.css'
 import './night-theme.css'
+import './motion.css'
+
+applyStoredTheme()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

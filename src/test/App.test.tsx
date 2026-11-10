@@ -7,6 +7,7 @@ import { App } from '../App'
 import { realOpportunities } from '../data/realOpportunities'
 import { sampleOpportunities } from '../data/opportunities'
 import { DEVICE_KEY } from '../lib/deviceStorage'
+import { THEME_STORAGE_KEY, applyStoredTheme } from '../lib/theme'
 
 let entryId = 0
 function HistoryControls() {
@@ -270,7 +271,7 @@ describe('Device-only preparation', () => {
 })
 
 describe('Honest information and route coverage', () => {
-  it('keeps essential card facts concise and retains the complete detail information', async () => {
+  it('keeps browsing cards minimal and moves full facts to the detail page', async () => {
     const user = userEvent.setup()
     renderApp('/opportunities')
     const card = screen
@@ -278,30 +279,25 @@ describe('Honest information and route coverage', () => {
         name: 'Life Sciences Summer Research Program 2027',
       })
       .closest('article')!
-    expect(
-      card.querySelectorAll('.topic-list > span:not(.extra-topics)'),
-    ).toHaveLength(2)
-    const more = within(card).getByRole('button', {
-      name: /Show 2 more research topics/,
-    })
-    expect(more).toHaveTextContent('+2 more')
-    expect(more).toHaveAttribute('aria-expanded', 'false')
-    expect(within(card).getByText('Bioinformatics')).not.toBeVisible()
-    await user.click(more)
-    expect(more).toHaveAttribute('aria-expanded', 'true')
-    expect(within(card).getByText('Bioinformatics')).toBeVisible()
-    expect(within(card).getByText('Neuroscience')).toBeVisible()
-    expect(screen.getByTestId('current-url')).toHaveTextContent(
-      '/opportunities',
+    const facts = within(card).getByRole('list', { name: 'Key facts' })
+    expect(facts).toHaveTextContent('Country: Switzerland')
+    expect(facts).toHaveTextContent('Deadline: 15 Nov 2026')
+    expect(facts).toHaveTextContent('Funding: Funded')
+    expect(card.querySelector('.radar-card-institution')).toHaveTextContent(
+      'EPFL',
     )
-    more.focus()
-    await user.keyboard('{Enter}')
-    expect(more).toHaveAttribute('aria-expanded', 'false')
-    expect(within(card).getByText('Bioinformatics')).not.toBeVisible()
-    await user.keyboard(' ')
-    expect(within(card).getByText('Bioinformatics')).toBeVisible()
-    for (const label of ['Deadline', 'Funding', 'Eligibility'])
-      expect(within(card).getByText(label)).toBeVisible()
+    // Eligibility, topic tags and check dates are detail-page information.
+    expect(card).not.toHaveTextContent('GPA')
+    expect(card).not.toHaveTextContent('Genomics')
+    expect(card).not.toHaveTextContent('Last checked')
+    expect(within(card).getAllByRole('link')).toHaveLength(1)
+    const outreach = screen
+      .getByRole('link', {
+        name: 'Undergraduate research placements · lab enquiry',
+      })
+      .closest('article')!
+    expect(outreach).toHaveTextContent('No fixed deadline')
+    expect(outreach).toHaveTextContent('Funding not stated')
     await user.click(within(card).getByRole('link'))
     const summary = screen.getByRole('region', { name: 'Opportunity summary' })
     for (const label of ['Deadline', 'Duration', 'Funding'])
@@ -316,9 +312,22 @@ describe('Honest information and route coverage', () => {
         (item) => item.slug === 'epfl-life-sciences-summer-2027',
       )!.sourceUrl,
     )
+    expect(screen.getByText('Genomics')).toBeVisible()
     const eligibility = screen
       .getByRole('heading', { name: 'Am I eligible?' })
       .closest('section')!
+    expect(eligibility).toHaveTextContent('GPA 3.75/4 or top 5%')
+    const materials = screen
+      .getByRole('heading', { name: 'What must I prepare?' })
+      .closest('section')!
+    const documents = within(
+      materials.querySelector<HTMLElement>('.document-list')!,
+    ).getAllByRole('listitem')
+    expect(documents.map((entry) => entry.textContent)).toEqual(
+      realOpportunities.find(
+        (item) => item.slug === 'epfl-life-sciences-summer-2027',
+      )!.requiredDocuments,
+    )
     const notes = eligibility.querySelector('details')!
     expect(notes).not.toHaveAttribute('open')
     await user.click(within(eligibility).getByText('Sources & notes'))
@@ -326,22 +335,19 @@ describe('Honest information and route coverage', () => {
     expect(within(notes).getAllByRole('link').length).toBeGreaterThan(0)
     expect(notes).toHaveTextContent('28 Oct 2026')
   })
-  it('shows decisive university and study-year restrictions while browsing', () => {
-    renderApp('/opportunities')
-    const rise = screen
-      .getByRole('link', { name: 'RISE Germany Research Internships 2027' })
-      .closest('article')!
-    expect(within(rise).getByText('Bachelor’s')).toBeVisible()
+  it('shows decisive university and study-year restrictions on the detail page', () => {
+    renderApp('/opportunities/daad-rise-germany-2027')
+    const eligibility = screen
+      .getByRole('heading', { name: 'Am I eligible?' })
+      .closest('section')!
     expect(
-      within(rise).getByText(/University in the US, Canada, UK or Ireland/),
+      within(eligibility).getByText(
+        /University in the US, Canada, UK or Ireland/,
+      ),
     ).toBeVisible()
-    expect(rise).toHaveTextContent(
+    expect(eligibility).toHaveTextContent(
       '2 undergraduate years completed; remain an undergraduate afterward',
     )
-    const lmu = screen
-      .getByRole('link', { name: 'LMU Munich Amgen Scholars Programme 2027' })
-      .closest('article')!
-    expect(lmu).toHaveTextContent('University in Europe (EHEA)')
   })
   it('renders repeated source URLs with distinct check dates without React key warnings', async () => {
     const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -352,7 +358,7 @@ describe('Honest information and route coverage', () => {
       .getByRole('heading', { name: 'Am I eligible?' })
       .closest('section')!
     await user.click(within(eligibility).getByText('Sources & notes'))
-    expect(within(eligibility).getAllByText(/29 Oct 2026/)).toHaveLength(3)
+    expect(within(eligibility).getAllByText(/29 Oct 2026/)).toHaveLength(4)
     expect(within(eligibility).getByText(/28 Oct 2026/)).toBeVisible()
     expect(errors).not.toHaveBeenCalled()
   })
@@ -478,4 +484,54 @@ it('does not reuse an unrelated page scroll when direct visits share the default
   first.unmount()
   renderApp('/', 'default')
   expect(window.scrollTo).toHaveBeenLastCalledWith(0, 0)
+})
+
+describe('Light and dark theme', () => {
+  it('switches theme, remembers the choice and keeps saved data separate', async () => {
+    delete document.documentElement.dataset.theme
+    const user = userEvent.setup()
+    const first = renderApp('/')
+    const toggle = screen.getByRole('button', { name: 'Switch to dark theme' })
+    await user.click(toggle)
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark')
+    expect(localStorage.getItem(DEVICE_KEY) ?? '').not.toContain('dark')
+    expect(
+      screen.getByRole('button', { name: 'Switch to light theme' }),
+    ).toBeVisible()
+    first.unmount()
+    delete document.documentElement.dataset.theme
+    applyStoredTheme()
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    renderApp('/opportunities')
+    await user.click(
+      screen.getByRole('button', { name: 'Switch to light theme' }),
+    )
+    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light')
+    delete document.documentElement.dataset.theme
+  })
+  it('follows the device when no choice is stored and survives blocked storage', async () => {
+    delete document.documentElement.dataset.theme
+    const getItem = vi
+      .spyOn(Storage.prototype, 'getItem')
+      .mockImplementation(() => {
+        throw new Error('blocked')
+      })
+    const setItem = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('blocked')
+      })
+    const user = userEvent.setup()
+    renderApp('/')
+    expect(document.documentElement.dataset.theme).toBeUndefined()
+    await user.click(
+      screen.getByRole('button', { name: 'Switch to dark theme' }),
+    )
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    getItem.mockRestore()
+    setItem.mockRestore()
+    delete document.documentElement.dataset.theme
+  })
 })

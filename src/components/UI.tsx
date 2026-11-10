@@ -1,20 +1,23 @@
 import {
-  ArrowUpRight,
+  ArrowRight,
   Bookmark,
+  CalendarClock,
   Check,
-  MapPin,
   FlaskConical,
+  MapPin,
   Radar,
+  Wallet,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useId, useState, type MouseEvent } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import type { ApplicationStatus, Opportunity } from '../types/opportunity'
 import {
   applicationStatus,
   closingSoonLabel,
   formatDate,
 } from '../lib/opportunities'
-import { factText } from '../lib/evidence'
+import { evidenceFor, factText } from '../lib/evidence'
+import { withViewTransition } from '../lib/viewTransition'
 import { useDevice } from '../lib/useDevice'
 import { rememberCatalogue } from '../lib/catalogueNavigation'
 
@@ -115,18 +118,45 @@ export function SaveButton({
     </button>
   )
 }
+function cardDeadline(item: Opportunity): string {
+  if (item.deadline) return formatDate(item.deadline)
+  if (evidenceFor(item, 'deadline').state === 'not-applicable')
+    return 'No fixed deadline'
+  return 'Deadline not stated'
+}
+function cardFunding(item: Opportunity): string {
+  if (item.funding === 'Unknown') return 'Funding not stated'
+  return item.isSample ? `${item.funding} · demo` : item.funding
+}
+/** Short monogram for the decorative institution badge. */
+function monogram(institution: string): string {
+  const words = institution
+    .replace(/\(.*?\)/g, '')
+    .split(/[\s,-]+/)
+    .filter((word) => /^[A-ZÀ-Ý]/.test(word))
+  if (words.length === 1) return words[0].slice(0, 4)
+  return words
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+}
+function hue(text: string): number {
+  let total = 0
+  for (const char of text) total = (total * 31 + char.charCodeAt(0)) % 997
+  return 200 + (total % 55) // sky blues through indigo
+}
+
 export function OpportunityCard({
   opportunity: item,
 }: {
   opportunity: Opportunity
 }) {
-  const [topicsExpanded, setTopicsExpanded] = useState(false)
-  const extraTopicsId = useId()
   const location = useLocation()
   const navigate = useNavigate()
   const status = applicationStatus(item)
   const closingSoon = item.isSample ? null : closingSoonLabel(item)
   const detailUrl = `/opportunities/${item.slug}`
+  const institution = item.institution.split(' · ')[0]
   const openDetail = (event: MouseEvent<HTMLAnchorElement>) => {
     if (
       event.button !== 0 ||
@@ -136,23 +166,35 @@ export function OpportunityCard({
       event.altKey
     )
       return
-    if (
-      location.pathname !== '/opportunities' &&
-      location.pathname !== '/saved'
-    )
-      return
     event.preventDefault()
-    const catalogueReturn = {
-      url: location.pathname + location.search,
-      scrollY: window.scrollY,
-    }
-    rememberCatalogue(catalogueReturn)
-    navigate(detailUrl, { state: { catalogueReturn } })
+    const fromCatalogue =
+      location.pathname === '/opportunities' || location.pathname === '/saved'
+    const catalogueReturn = fromCatalogue
+      ? { url: location.pathname + location.search, scrollY: window.scrollY }
+      : null
+    if (catalogueReturn) rememberCatalogue(catalogueReturn)
+    withViewTransition(
+      () =>
+        navigate(
+          detailUrl,
+          catalogueReturn ? { state: { catalogueReturn } } : undefined,
+        ),
+      event.currentTarget.closest('article'),
+    )
   }
   return (
-    <article className="opportunity-card">
-      <div className="card-top">
-        <p className="card-category">{item.category}</p>
+    <article
+      className={`radar-card radar-card-${status.toLowerCase().replaceAll(' ', '-')}`}
+      style={{ '--card-hue': hue(institution) } as CSSProperties}
+    >
+      <div className="radar-card-top">
+        <span className="radar-card-avatar" aria-hidden="true">
+          {monogram(institution)}
+        </span>
+        <div className="radar-card-status">
+          <StatusBadge status={status} demo={item.isSample} />
+          {closingSoon && <span className="closing-soon">{closingSoon}</span>}
+        </div>
         <SaveButton opportunity={item} compact />
       </div>
       {item.isSample && (
@@ -161,90 +203,30 @@ export function OpportunityCard({
       <h3>
         <Link to={detailUrl} onClick={openDetail}>
           {item.title}
-          <ArrowUpRight size={18} aria-hidden="true" />
         </Link>
       </h3>
-      <p className="institution">{item.institution.split(' · ')[0]}</p>
-      <p className="card-location">
-        <MapPin size={14} aria-hidden="true" />
-        <span>
+      <p className="radar-card-institution">{institution}</p>
+      <ul className="radar-card-meta" aria-label="Key facts">
+        <li>
+          <MapPin size={15} aria-hidden="true" />
+          <span className="sr-only">Country: </span>
           {factText(item, 'country')}
-          <span aria-hidden="true"> · </span>
-          <span className="sr-only">; period: </span>
-          {factText(item, 'period')}
-        </span>
-      </p>
-      <div className="topic-list">
-        {item.scientificTopics.slice(0, 2).map((topic) => (
-          <span key={topic}>{topic}</span>
-        ))}
-        {item.scientificTopics.length > 2 && (
-          <>
-            <button
-              type="button"
-              className="more-topics"
-              aria-expanded={topicsExpanded}
-              aria-controls={extraTopicsId}
-              aria-label={`${topicsExpanded ? 'Hide' : 'Show'} ${item.scientificTopics.length - 2} more research ${item.scientificTopics.length === 3 ? 'topic' : 'topics'} for ${item.title}`}
-              onClick={() => setTopicsExpanded((expanded) => !expanded)}
-            >
-              {topicsExpanded
-                ? 'Show fewer'
-                : `+${item.scientificTopics.length - 2} more`}
-            </button>
-            <span
-              id={extraTopicsId}
-              className="extra-topics"
-              hidden={!topicsExpanded}
-            >
-              {item.scientificTopics.slice(2).map((topic) => (
-                <span key={topic}>{topic}</span>
-              ))}
-            </span>
-          </>
-        )}
-      </div>
-      <dl className="card-key-facts">
-        <div className="card-deadline">
-          <dt>Deadline</dt>
-          <dd>
-            {item.deadline
-              ? formatDate(item.deadline)
-              : factText(item, 'deadline')}
-            {closingSoon && (
-              <span className="closing-soon"> · {closingSoon}</span>
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>Funding</dt>
-          <dd>
-            {factText(item, 'funding')}
-            {item.isSample && item.funding !== 'Unknown' ? ' · demo' : ''}
-          </dd>
-        </div>
-        <div className="card-eligibility">
-          <dt>Eligibility</dt>
-          <dd>
-            {factText(item, 'eligibleDegrees')}
-            {item.eligibilitySummary && (
-              <span className="card-eligibility-summary">
-                {factText(item, 'eligibilitySummary')}
-              </span>
-            )}
-          </dd>
-        </div>
-      </dl>
-      <div className="card-bottom">
-        <StatusBadge status={status} demo={item.isSample} />
-        <span className="last-checked">
-          {item.isSample
-            ? 'Not verified'
-            : item.verificationStatus === 'Needs review'
-              ? 'Source needs clarification'
-              : `Last checked ${formatDate(item.lastVerifiedDate)}`}
-        </span>
-      </div>
+        </li>
+        <li>
+          <CalendarClock size={15} aria-hidden="true" />
+          <span className="sr-only">Deadline: </span>
+          {cardDeadline(item)}
+        </li>
+        <li>
+          <Wallet size={15} aria-hidden="true" />
+          <span className="sr-only">Funding: </span>
+          {cardFunding(item)}
+        </li>
+      </ul>
+      <span className="radar-card-more" aria-hidden="true">
+        View details
+        <ArrowRight size={16} />
+      </span>
     </article>
   )
 }
