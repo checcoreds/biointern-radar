@@ -121,7 +121,8 @@ src/
 docs/source-review.md            Source audit, review log and unresolved facts
 docs/status-updates.md           How to refresh statuses and deadlines
 scripts/status-report.mjs        Prints the status review (npm run status:report)
-public/_headers                 Security headers for Cloudflare Pages
+public/_headers                 Security headers for Cloudflare
+wrangler.jsonc                  Cloudflare deployment settings (static files only)
 vite.config.ts                   Build, tests, and preview with the production security headers
 .github/workflows/ci.yml         Format, test, build and dependency-audit checks; no deployment
 AGENTS.md                        Project conventions
@@ -161,16 +162,16 @@ git add .
 git commit -m "Describe the next milestone"
 ```
 
-When you approve publishing, Cloudflare Pages can use:
+Cloudflare builds and serves the site from the GitHub repository (Workers static assets, configured in `wrangler.jsonc`; deploy command `npx wrangler deploy`). Every push to `main` redeploys it. Build settings:
 
-| Setting          | Value                                         |
-| ---------------- | --------------------------------------------- |
-| Framework        | React / Vite                                  |
-| Build command    | `npm run build`                               |
-| Output directory | `dist`                                        |
-| Root             | Repository root                               |
-| Node             | `24.16.0` (`.node-version` or `NODE_VERSION`) |
-| Secrets          | None                                          |
+| Setting          | Value                          |
+| ---------------- | ------------------------------ |
+| Framework        | React / Vite                   |
+| Build command    | `npm run build`                |
+| Output directory | `dist`                         |
+| Root             | Repository root                |
+| Node             | `24.16.0` (read from `.nvmrc`) |
+| Secrets          | None                           |
 
 Pages provides SPA routing when no root `404.html` exists, so detail URLs can load directly. Verify direct links after any eventual deployment. `public/_headers` is applied by Pages in production and by `npm run preview` locally (not by `npm run dev`). The policy allows scripts, styles, images and fonts from this site only, with no inline code, so do not add inline `<script>`/`<style>` tags or third-party embeds without updating it. No paid services or public deployment have been added.
 
