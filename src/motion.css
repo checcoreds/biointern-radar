@@ -4,7 +4,7 @@
 @media (prefers-reduced-motion: no-preference) {
   /* Each page rises gently into place on navigation. */
   .page-enter {
-    animation: page-in 0.5s var(--ease-out) backwards;
+    animation: page-in 0.32s var(--ease-out) backwards;
   }
   .is-view-transition .page-enter {
     animation: none;
@@ -12,30 +12,30 @@
 
   /* Cards cascade in one after another. */
   .cards-grid > * {
-    animation: card-in 0.55s var(--ease-out) backwards;
+    animation: card-in 0.4s var(--ease-out) backwards;
   }
   .cards-grid > :nth-child(2) {
-    animation-delay: 60ms;
+    animation-delay: 40ms;
   }
   .cards-grid > :nth-child(3) {
-    animation-delay: 120ms;
+    animation-delay: 80ms;
   }
   .cards-grid > :nth-child(4) {
-    animation-delay: 180ms;
+    animation-delay: 120ms;
   }
-  .cards-grid > :nth-child(5) {
-    animation-delay: 240ms;
-  }
-  .cards-grid > :nth-child(6) {
-    animation-delay: 300ms;
-  }
-  .cards-grid > :nth-child(n + 7) {
-    animation-delay: 340ms;
+  .cards-grid > :nth-child(n + 5) {
+    animation-delay: 160ms;
   }
 
-  /* Cards lift towards the pointer and squash slightly when pressed. */
+  /* Cards lift and lean towards the pointer (lib/pointerLight.ts sets the
+     angles) and squash slightly when pressed. */
+  .radar-card {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+  }
   .radar-card:hover {
-    transform: translateY(-5px);
+    transform: perspective(900px) translateY(-5px) rotateX(var(--tilt-x))
+      rotateY(var(--tilt-y));
   }
   .radar-card:active {
     transform: translateY(-1px) scale(0.985);
@@ -58,8 +58,7 @@
 
   /* Buttons respond to touch. */
   .button,
-  .button-dark,
-  .header-cta,
+  .icon-button,
   .save-button,
   .active-filters button,
   .mobile-filter-toggle {
@@ -70,14 +69,11 @@
       color 0.25s,
       border-color 0.25s;
   }
-  .button:hover,
-  .button-dark:hover,
-  .header-cta:hover {
+  .button:hover {
     transform: translateY(-2px);
   }
   .button:active,
-  .button-dark:active,
-  .header-cta:active,
+  .icon-button:active,
   .save-button:active,
   .active-filters button:active,
   .mobile-filter-toggle:active {
@@ -98,43 +94,62 @@
   }
 
   /* Detail sections arrive in sequence below the heading. */
-  .detail-heading,
   .opportunity-summary {
-    animation: card-in 0.5s var(--ease-out) backwards;
-  }
-  .opportunity-summary {
-    animation-delay: 80ms;
+    animation: card-in 0.4s 40ms var(--ease-out) backwards;
   }
   .detail-main > *,
   .detail-sidebar > * {
-    animation: card-in 0.55s var(--ease-out) backwards;
+    animation: card-in 0.4s var(--ease-out) backwards;
   }
   .detail-main > :nth-child(1) {
-    animation-delay: 140ms;
+    animation-delay: 80ms;
   }
   .detail-main > :nth-child(2),
   .detail-sidebar > :nth-child(1) {
-    animation-delay: 200ms;
+    animation-delay: 120ms;
   }
-  .detail-main > :nth-child(3),
+  .detail-main > :nth-child(n + 3),
   .detail-sidebar > :nth-child(2) {
-    animation-delay: 260ms;
-  }
-  .detail-main > :nth-child(n + 4) {
-    animation-delay: 320ms;
+    animation-delay: 160ms;
   }
 
-  /* Checklist ticks bounce. */
-  .checklist-item {
+  /* Checklist ticks draw in and bounce. */
+  input[type='checkbox'] {
     transition:
-      background 0.3s,
-      border-color 0.3s;
+      background 0.2s,
+      border-color 0.2s;
+  }
+  input[type='checkbox']::after {
+    transition: transform 0.25s var(--ease-spring);
   }
   .checklist-item input:checked {
     animation: tick-pop 0.4s var(--ease-spring);
   }
+  .site-nav a,
+  .footer-nav a,
+  .text-link,
+  .back-link {
+    transition:
+      color 0.2s,
+      background 0.2s;
+  }
   .complete-note {
     animation: chip-in 0.45s var(--ease-spring) backwards;
+  }
+
+  /* The headline's colour shifts slowly; the main button catches the light. */
+  .hero h1 > span {
+    background-size: 220% 100%;
+    animation: headline-shift 9s ease-in-out infinite alternate;
+  }
+  .button-primary:hover::after {
+    transform: translateX(120%);
+    transition: transform 0.7s var(--ease-out);
+  }
+
+  /* Colour drifts slowly behind every page. */
+  body::after {
+    animation: aurora-drift 32s ease-in-out infinite alternate;
   }
 
   /* Soft light drifts behind the hero. */
@@ -163,16 +178,59 @@
   }
 }
 
+/* Scroll-driven motion, where the browser supports it: content rises into
+   place as it enters the screen, and a bar along the top tracks reading
+   progress. Other browsers keep the timed entrances above. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .cards-grid > :nth-child(n),
+    .step,
+    .pathway-disclosure {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+      animation-delay: 0s;
+    }
+    .scroll-progress {
+      display: block;
+      animation: progress-grow linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+    scale: 0.96;
+  }
+}
+@keyframes progress-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes headline-shift {
+  to {
+    background-position: 100% 0;
+  }
+}
+@keyframes aurora-drift {
+  to {
+    transform: translate(6%, -4%) rotate(14deg) scale(1.12);
+  }
+}
 @keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(8px);
   }
 }
 @keyframes card-in {
   from {
     opacity: 0;
-    transform: translateY(22px) scale(0.98);
+    transform: translateY(14px) scale(0.985);
   }
 }
 @keyframes chip-in {

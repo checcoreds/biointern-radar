@@ -1,5 +1,17 @@
 # Verification — 28 October 2026
 
+## Review, stylesheet consolidation and security hardening — 11 November 2026
+
+- **Design.** Sticky header with pill navigation (the redundant header button was removed), a larger hero with three computed catalogue facts, card-style “How it works” steps, a styled opportunity-types disclosure, a real footer, labelled sort options, filter selects that no longer cut off their own text, custom checkboxes, a label/value summary on phones and a “days left” chip on the detail summary. Institution badges now prefer real acronyms (ETH, LMU, CRG).
+- **Code.** Three overlapping stylesheets (about 3,500 lines, most selectors defined several times) became one token file and one component file (about 1,900 lines, each selector defined once); built CSS fell from 69 KB to about 50 KB. Every colour is one `light-dark()` token. The superseded `refinements.css` was deleted at the user's request.
+- **Fixes.** The Saved badge counted records that no longer exist; page background no longer repaints on scroll; “Show results” no longer double-offsets under the header; the browser toolbar colour follows a chosen theme; the footer stays at the bottom of short pages.
+- **Security.** Content security policy tightened to `default-src 'none'` with no `'unsafe-inline'` and no `data:`; added HSTS, COOP/CORP, `form-action`, a wider permissions policy and long-lived caching for hashed assets. `npm run preview` now serves these headers. CI also checks formatting and audits shipped packages.
+- **139 tests passed** (29 new: badges, catalogue facts, security headers, token rules, Saved badge, overview/footer); TypeScript, build and formatting passed; `npm audit` found 0 vulnerabilities.
+- Browser, development server: home, catalogue, detail, empty Saved and 404 in light and dark at 1440 and 1024/1100px; home and filtered catalogue at 768px; home, catalogue, mobile menu, filter panel and two details at 390px; home at 320px with no horizontal overflow. Interactively: filter → detail → Back restored the filter and a 900px scroll position; save/unsave, checklist ticks, reload persistence and reset; “Show results” focus. No console errors.
+- Browser, production build with the real headers (`npm run preview`): catalogue rendered 15 cards with tinted badges under the strict policy, the theme toggle switched both ways, and there were no policy violations or console errors.
+- Computed contrast for the new colour pairings was 4.6:1 or higher in both themes.
+- Not tested: physical phones, Safari and Firefox, screen readers, the reduced-motion setting in a real browser (CSS-gated), a browser old enough to need the Lightning CSS fallback (the same fallback output is what modern Chrome rendered in the production check), and the headers on Cloudflare itself (not deployed).
+
 ## Blue light/dark themes — 10 November 2026
 
 - Replaced the green palette with blue light and dark themes and a header sun/moon toggle. Converted about 200 hard-coded colours in the base CSS, the radar and the animations to shared theme tokens. Required documents now show as a list.
@@ -88,6 +100,16 @@ The isolated, lazy-loaded instrument preserves normal HTML field links and the l
 ## Flat animated radar replacement
 
 Replaced the active 3D scene with the original flat CSS radar. Native animation-cycle events synchronize the five-second sweep, crossfading field name and optional quiet ping. Sound is opt-in; it stops when muted/offscreen/hidden or after navigation. The current production build contains no graphics chunk. See [current radar notes](radar.md).
+
+## Showpiece layer (11 November 2026)
+
+Added at the user's request: a WebGL helix-and-radar hero, pointer light and tilt on cards, scroll-driven reveals, a reading-progress bar, a drifting background, counting hero numbers and site-wide opt-in sound effects.
+
+- **157 tests passed**, including new ones for the sound store (silent until enabled, remembered choice, blocked audio, no audio outside a gesture), pointer light (mouse only; not touch, coarse pointers or reduced motion), scene layout at five stage sizes, colour parsing and the count-up always settling on the real number. TypeScript/Vite build and formatting passed.
+- Checked the overview in light and dark at 1440px and a 500px single-column layout with WebGL on, and at 1100px with WebGL off (the flat CSS radar appears). Checked the catalogue in dark at 1440px.
+- Checked the production build under the strict content security policy: the 3D scene drew, pointer light and tilt applied on hover, and the console showed no policy violations or errors. No horizontal overflow on the overview, catalogue or a detail page at 320px.
+- **Not checked:** how the sounds actually sound (only that the right audio calls are made), frame rate on real phones, Safari and Firefox (Firefox lacks scroll-driven animation and should show the timed entrances instead), screen readers, and reduced motion in a real browser.
+- `src/components/radar/radarAudio.ts` is no longer imported (replaced by `src/lib/sound.ts`); it is left in place pending the user's approval to delete it.
 
 ## Data limits
 

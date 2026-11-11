@@ -152,6 +152,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
         </div>
         <div className="catalogue-toolbar">
           <button
+            type="button"
             className={`mobile-filter-toggle ${filterCount ? 'has-filters' : ''}`}
             onClick={() => setFiltersOpen((previous) => !previous)}
             aria-expanded={filtersOpen}
@@ -167,21 +168,23 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
             <label htmlFor="sort-results" className="sr-only">
               Sort by
             </label>
-            <select
-              id="sort-results"
-              className={
-                filters.sort !== 'recommended' ? 'is-selected' : undefined
-              }
-              value={filters.sort}
-              onChange={(event) => update('sort', event.target.value)}
-            >
-              <option value="recommended">Application status</option>
-              <option value="deadline-asc">Deadline: soonest</option>
-              <option value="deadline-desc">Deadline: latest</option>
-              {!['recommended', 'deadline-asc', 'deadline-desc'].includes(
-                filters.sort,
-              ) && <option value={filters.sort}>Default order</option>}
-            </select>
+            <span className="select-wrap">
+              <select
+                id="sort-results"
+                className={
+                  filters.sort !== 'recommended' ? 'is-selected' : undefined
+                }
+                value={filters.sort}
+                onChange={(event) => update('sort', event.target.value)}
+              >
+                <option value="recommended">Sort: open first</option>
+                <option value="deadline-asc">Sort: soonest deadline</option>
+                <option value="deadline-desc">Sort: latest deadline</option>
+                {!['recommended', 'deadline-asc', 'deadline-desc'].includes(
+                  filters.sort,
+                ) && <option value={filters.sort}>Sort: open first</option>}
+              </select>
+            </span>
           </div>
         </div>
       </div>
@@ -194,6 +197,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
           <div className="filter-heading">
             <h2>Refine your search</h2>
             <button
+              type="button"
               className="reset-button"
               onClick={reset}
               disabled={params.size === 0}
@@ -204,57 +208,61 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
           <div className="filter-fields" id="filter-fields">
             <div className="filter-group">
               <label htmlFor="filter-collection">Collection</label>
-              <select
-                id="filter-collection"
-                className={
-                  filters.collection !== defaultCollection
-                    ? 'is-selected'
-                    : undefined
-                }
-                value={filters.collection}
-                onChange={(event) =>
-                  update(
-                    'collection',
-                    event.target.value === defaultCollection
-                      ? ''
-                      : event.target.value,
-                  )
-                }
-              >
-                {savedOnly && <option value="all">All saved records</option>}
-                <option value="real">Official-source records</option>
-                <option value="demo">Fictional demos only</option>
-                {!['real', 'demo', ...(savedOnly ? ['all'] : [])].includes(
-                  filters.collection,
-                ) && (
-                  <option value={filters.collection}>
-                    {filters.collection}
-                  </option>
-                )}
-              </select>
+              <span className="select-wrap">
+                <select
+                  id="filter-collection"
+                  className={
+                    filters.collection !== defaultCollection
+                      ? 'is-selected'
+                      : undefined
+                  }
+                  value={filters.collection}
+                  onChange={(event) =>
+                    update(
+                      'collection',
+                      event.target.value === defaultCollection
+                        ? ''
+                        : event.target.value,
+                    )
+                  }
+                >
+                  {savedOnly && <option value="all">All saved records</option>}
+                  <option value="real">Official-source records</option>
+                  <option value="demo">Fictional demos only</option>
+                  {!['real', 'demo', ...(savedOnly ? ['all'] : [])].includes(
+                    filters.collection,
+                  ) && (
+                    <option value={filters.collection}>
+                      {filters.collection}
+                    </option>
+                  )}
+                </select>
+              </span>
             </div>
             {filterOptions.map((filter) => (
               <div className="filter-group" key={filter.key}>
                 <label htmlFor={`filter-${filter.key}`}>{filter.label}</label>
-                <select
-                  id={`filter-${filter.key}`}
-                  className={filters[filter.key] ? 'is-selected' : undefined}
-                  value={String(filters[filter.key])}
-                  onChange={(event) => update(filter.key, event.target.value)}
-                >
-                  <option value="">Any {filter.label.toLowerCase()}</option>
-                  {filters[filter.key] &&
-                    !filter.options.includes(String(filters[filter.key])) && (
-                      <option value={String(filters[filter.key])}>
-                        {String(filters[filter.key])}
+                <span className="select-wrap">
+                  <select
+                    id={`filter-${filter.key}`}
+                    className={filters[filter.key] ? 'is-selected' : undefined}
+                    value={String(filters[filter.key])}
+                    onChange={(event) => update(filter.key, event.target.value)}
+                  >
+                    <option value="">Any {filter.label.toLowerCase()}</option>
+                    {filters[filter.key] &&
+                      !filter.options.includes(String(filters[filter.key])) && (
+                        <option value={String(filters[filter.key])}>
+                          {String(filters[filter.key])}
+                        </option>
+                      )}
+                    {filter.options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
                       </option>
-                    )}
-                  {filter.options.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                    ))}
+                  </select>
+                </span>
               </div>
             ))}
             <label className="hide-closed-control">
@@ -272,7 +280,8 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
               no requirement.
             </p>
             <button
-              className="button button-dark show-results"
+              type="button"
+              className="button button-primary show-results"
               onClick={showResults}
             >
               Show {results.length}{' '}
@@ -291,7 +300,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
             <h2 id="results-title" className="sr-only">
               {savedOnly ? 'Saved opportunities' : 'Research opportunities'}
             </h2>
-            <p role="status" aria-live="polite">
+            <p role="status">
               <strong>{results.length}</strong>{' '}
               {results.length === 1 ? 'opportunity' : 'opportunities'}
               {filters.collection === 'demo' ? ' · fictional demos' : ''}
@@ -301,6 +310,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
             <div className="active-filters">
               {activeFilters.map(([key, value]) => (
                 <button
+                  type="button"
                   key={key}
                   onClick={() => update(key, '')}
                   aria-label={`Remove ${key} filter: ${value}`}
@@ -311,6 +321,7 @@ export function CataloguePage({ savedOnly = false }: { savedOnly?: boolean }) {
               ))}
               {filters.hideClosed && (
                 <button
+                  type="button"
                   onClick={() => update('hideClosed', '')}
                   aria-label="Remove hide closed filter"
                 >

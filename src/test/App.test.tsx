@@ -156,6 +156,43 @@ describe('Search, filters and history', () => {
       screen.getByRole('link', { name: 'Back to the catalogue' }),
     ).toHaveAttribute('href', '/opportunities')
   })
+  it('summarises the real catalogue on the overview and in the footer', () => {
+    renderApp()
+    const facts = within(
+      screen.getByRole('list', { name: 'Catalogue at a glance' }),
+    ).getAllByRole('listitem')
+    expect(facts[0]).toHaveTextContent(
+      `${realOpportunities.length}opportunities`,
+    )
+    expect(facts[2]).toHaveTextContent('latest source check')
+    expect(
+      within(screen.getByRole('contentinfo')).getByRole('navigation', {
+        name: 'Footer',
+      }),
+    ).toBeVisible()
+    expect(screen.getByRole('contentinfo')).toHaveTextContent(
+      /Always confirm details with the organiser/,
+    )
+  })
+  it('keeps sound effects off until asked, from a labelled footer control', async () => {
+    const Audio = vi.fn()
+    vi.stubGlobal('AudioContext', Audio)
+    const user = userEvent.setup()
+    renderApp('/opportunities/epfl-life-sciences-summer-2027')
+    const toggle = within(screen.getByRole('contentinfo')).getByRole('button', {
+      name: 'Turn sound effects on',
+    })
+    expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    expect(toggle).toHaveTextContent('Sound effects off')
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Save Life Sciences Summer Research Program 2027',
+      }),
+    )
+    await user.click(screen.getAllByRole('checkbox')[0])
+    expect(Audio).not.toHaveBeenCalled()
+    vi.unstubAllGlobals()
+  })
   it('makes radar labels accessible links to filtered real records', async () => {
     const user = userEvent.setup()
     renderApp()
@@ -249,6 +286,25 @@ describe('Device-only preparation', () => {
         name: 'Your next steps, all in one place',
       }),
     ).toBeVisible()
+  })
+  it('counts only saved records that still exist in the navigation badge', () => {
+    localStorage.setItem(
+      DEVICE_KEY,
+      JSON.stringify({
+        version: 1,
+        savedIds: ['a-record-removed-from-the-catalogue', 'sample-01'],
+        checklists: {},
+      }),
+    )
+    renderApp('/saved')
+    expect(
+      screen.getByRole('link', { name: 'Saved opportunities (1)' }),
+    ).toBeVisible()
+    expect(screen.getAllByRole('article')).toHaveLength(1)
+    // The orphaned ID is kept in storage in case the record returns.
+    expect(JSON.parse(localStorage.getItem(DEVICE_KEY)!).savedIds).toHaveLength(
+      2,
+    )
   })
   it('handles corrupt stored data without crashing', () => {
     localStorage.setItem(DEVICE_KEY, '{broken')

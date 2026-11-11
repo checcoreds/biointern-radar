@@ -11,6 +11,7 @@ import { Checklist } from '../components/Checklist'
 import { SampleNotice, SaveButton, StatusBadge } from '../components/UI'
 import {
   applicationStatus,
+  closingSoonLabel,
   formatDate,
   opportunityRepository,
   safeSourceUrl,
@@ -117,12 +118,13 @@ export function OpportunityPage() {
         <span className="eyebrow">OFF THE RADAR</span>
         <h1>Opportunity not found.</h1>
         <p>This record may have moved, or the link may be incorrect.</p>
-        <Link className="button button-dark" to={backUrl} state={backState}>
+        <Link className="button button-primary" to={backUrl} state={backState}>
           <ArrowLeft size={17} aria-hidden="true" /> Back to the catalogue
         </Link>
       </div>
     )
   const source = safeSourceUrl(item.sourceUrl)
+  const closingSoon = item.isSample ? null : closingSoonLabel(item)
   return (
     <div className="container detail-page">
       <Link className="back-link" to={backUrl} state={backState}>
@@ -175,6 +177,9 @@ export function OpportunityPage() {
               {item.deadline
                 ? formatDate(item.deadline)
                 : factText(item, 'deadline')}
+              {closingSoon && (
+                <span className="closing-soon">{closingSoon}</span>
+              )}
             </dd>
           </div>
           <div>
@@ -188,7 +193,7 @@ export function OpportunityPage() {
         </dl>
         {source ? (
           <a
-            className="button button-dark summary-source"
+            className="button button-primary summary-source"
             aria-label="Read the official source (opens in a new tab)"
             href={source}
             target="_blank"
@@ -378,7 +383,7 @@ export function OpportunityPage() {
             </dl>
             {source && (
               <a
-                className="button button-dark official-button"
+                className="button button-soft official-button"
                 href={source}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -422,8 +427,9 @@ export function OpportunityPage() {
                   <li
                     key={`${official.url}:${official.checkedAt}:${official.title}`}
                   >
+                    {/* Same HTTPS-only gate as every other outbound link. */}
                     <a
-                      href={official.url}
+                      href={safeSourceUrl(official.url) ?? undefined}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

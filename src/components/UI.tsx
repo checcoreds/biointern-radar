@@ -20,6 +20,8 @@ import { evidenceFor, factText } from '../lib/evidence'
 import { withViewTransition } from '../lib/viewTransition'
 import { useDevice } from '../lib/useDevice'
 import { rememberCatalogue } from '../lib/catalogueNavigation'
+import { institutionHue, monogram } from '../lib/monogram'
+import { sound } from '../lib/sound'
 
 export function Brand() {
   return (
@@ -94,11 +96,13 @@ export function SaveButton({
   const saved = data.savedIds.includes(item.id)
   return (
     <button
-      className={`save-button ${saved ? 'is-saved' : ''} ${compact ? 'compact-save' : ''}`}
+      type="button"
+      className={`save-button ${saved ? 'is-saved' : ''}`}
       aria-pressed={saved}
       aria-label={`${saved ? 'Unsave' : 'Save'} ${item.title}`}
       onClick={() => {
         toggleSaved(item.id)
+        sound.play(saved ? 'unsave' : 'save')
         if (saved && location.pathname === '/saved')
           requestAnimationFrame(() =>
             document
@@ -128,24 +132,6 @@ function cardFunding(item: Opportunity): string {
   if (item.funding === 'Unknown') return 'Funding not stated'
   return item.isSample ? `${item.funding} · demo` : item.funding
 }
-/** Short monogram for the decorative institution badge. */
-function monogram(institution: string): string {
-  const words = institution
-    .replace(/\(.*?\)/g, '')
-    .split(/[\s,-]+/)
-    .filter((word) => /^[A-ZÀ-Ý]/.test(word))
-  if (words.length === 1) return words[0].slice(0, 4)
-  return words
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-}
-function hue(text: string): number {
-  let total = 0
-  for (const char of text) total = (total * 31 + char.charCodeAt(0)) % 997
-  return 200 + (total % 55) // sky blues through indigo
-}
-
 export function OpportunityCard({
   opportunity: item,
 }: {
@@ -185,7 +171,7 @@ export function OpportunityCard({
   return (
     <article
       className={`radar-card radar-card-${status.toLowerCase().replaceAll(' ', '-')}`}
-      style={{ '--card-hue': hue(institution) } as CSSProperties}
+      style={{ '--card-hue': institutionHue(institution) } as CSSProperties}
     >
       <div className="radar-card-top">
         <span className="radar-card-avatar" aria-hidden="true">
@@ -257,11 +243,11 @@ export function EmptyState({
           : 'Try a broader search or remove a filter to find more opportunities.'}
       </p>
       {saved && !hasSaved ? (
-        <Link className="button button-dark" to="/opportunities">
+        <Link className="button button-primary" to="/opportunities">
           Explore internships
         </Link>
       ) : (
-        <button className="button button-dark" onClick={reset}>
+        <button type="button" className="button button-primary" onClick={reset}>
           Clear search and filters
         </button>
       )}

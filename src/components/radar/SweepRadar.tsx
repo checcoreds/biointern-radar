@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Dna, ChevronRight, Pause, Play, Volume2, VolumeX } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { createRadarAudio } from './radarAudio'
+import { sound, useSoundStatus } from '../../lib/sound'
+import { useRadarScene } from './useRadarScene'
 import './sweep-radar.css'
 
 export const sweepFields = [
@@ -20,9 +21,8 @@ export const sweepFields = [
 
 export function SweepRadar() {
   const region = useRef<HTMLElement>(null)
-  const audio = useRef<ReturnType<typeof createRadarAudio> | null>(null)
-  const pendingAudio = useRef<AudioContext | null>(null)
-  const audioAttempt = useRef(0)
+  const sceneHost = useRef<HTMLDivElement>(null)
+  const sweep = useRef<HTMLDivElement>(null)
   const [turn, setTurn] = useState(0)
   const [paused, setPaused] = useState(false)
   const [fieldFocused, setFieldFocused] = useState(false)
@@ -34,10 +34,18 @@ export function SweepRadar() {
       typeof matchMedia === 'function' &&
       matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const [sound, setSound] = useState(false)
-  const [soundError, setSoundError] = useState(false)
+  const soundStatus = useSoundStatus()
   const running = !paused && !fieldFocused && visible && pageVisible && !reduced
   const selected = (turn + fieldOffset) % sweepFields.length
+  // The 3D helix replaces the flat dial where WebGL works; the dial stays in
+  // the page as the clock for each turn and as the fallback.
+  const scene = useRadarScene({
+    host: sceneHost,
+    sweep,
+    running,
+    visible: visible && pageVisible,
+    reduced,
+  })
 
   useEffect(() => {
     const media =
@@ -60,51 +68,9 @@ export function SweepRadar() {
       observer?.disconnect()
       media?.removeEventListener('change', preference)
       document.removeEventListener('visibilitychange', visibility)
-      audioAttempt.current++
-      audio.current?.close()
-      audio.current = null
-      void pendingAudio.current?.close().catch(() => {})
-      pendingAudio.current = null
     }
   }, [])
-  useEffect(() => {
-    if (!running) audio.current?.stop()
-  }, [running])
 
-  const toggleSound = async () => {
-    if (sound) {
-      audioAttempt.current++
-      audio.current?.close()
-      audio.current = null
-      setSound(false)
-      return
-    }
-    const attempt = ++audioAttempt.current
-    void pendingAudio.current?.close().catch(() => {})
-    let context: AudioContext | null = null
-    try {
-      context = new AudioContext()
-      pendingAudio.current = context
-      await context.resume()
-      if (context.state !== 'running') throw new Error('Audio is blocked')
-      if (attempt !== audioAttempt.current) {
-        void context.close().catch(() => {})
-        return
-      }
-      pendingAudio.current = null
-      audio.current = createRadarAudio(context)
-      setSound(true)
-      setSoundError(false)
-      audio.current.beep()
-    } catch {
-      if (pendingAudio.current === context) pendingAudio.current = null
-      if (context) void context.close().catch(() => {})
-      if (attempt === audioAttempt.current) {
-        setSoundError(true)
-        setSound(false)
-      }
-    }
-  }
   return (
     <section
       ref={region}
@@ -112,10 +78,12 @@ export function SweepRadar() {
       aria-label="Explore research fields"
       aria-describedby="flat-radar-caption"
       data-running={running}
+      data-scene={scene ? 'on' : 'off'}
       data-turn={turn}
       data-field={sweepFields[selected].name}
     >
       <div className="flat-radar-stage">
+        <div ref={sceneHost} className="flat-radar-scene" aria-hidden="true" />
         <div className="flat-radar-grid" aria-hidden="true" />
         <div className="flat-radar-dial" aria-hidden="true">
           <div className="flat-radar-ring ring-outer" />
@@ -124,11 +92,12 @@ export function SweepRadar() {
           <div className="flat-radar-axis axis-horizontal" />
           <div className="flat-radar-axis axis-vertical" />
           <div
+            ref={sweep}
             className="flat-radar-sweep"
             onAnimationIteration={(event) => {
               if (event.animationName !== 'flat-radar-turn' || !running) return
               setTurn((value) => value + 1)
-              audio.current?.beep()
+              sound.play('ping')
             }}
           />
           <div className="flat-radar-centre">
@@ -199,11 +168,18 @@ export function SweepRadar() {
               </button>
               <button
                 type="button"
-                aria-label={sound ? 'Mute radar sound' : 'Enable radar sound'}
-                aria-pressed={sound}
-                onClick={() => void toggleSound()}
+                aria-label={
+                  soundStatus === 'on'
+                    ? 'Turn sound effects off'
+                    : 'Turn sound effects on'
+                }
+                title="Sound effects for the radar, saving and checklists"
+                aria-pressed={soundStatus === 'on'}
+                onClick={() =>
+                  soundStatus === 'on' ? sound.turnOff() : void sound.turnOn()
+                }
               >
-                {sound ? (
+                {soundStatus === 'on' ? (
                   <Volume2 size={16} aria-hidden="true" />
                 ) : (
                   <VolumeX size={16} aria-hidden="true" />
@@ -213,7 +189,7 @@ export function SweepRadar() {
           )}
         </div>
       </div>
-      {soundError && (
+      {soundStatus === 'unavailable' && (
         <p className="flat-radar-audio-note" role="status">
           Sound is unavailable in this browser. The radar still works.
         </p>

@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { App } from './App'
 import { applyStoredTheme } from './lib/theme'
-import './styles.css'
-import './refinements.css'
 import './night-theme.css'
+import './styles.css'
 import './motion.css'
 
 applyStoredTheme()

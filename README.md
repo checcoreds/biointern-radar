@@ -11,13 +11,13 @@ To see which records need their statuses rechecked, run `npm run status:report` 
 Run these commands in the **same Terminal window**, one at a time:
 
 ```sh
-cd "/Users/erossi/Desktop/BioIntern Radar"
+cd "path/to/BioIntern Radar"
 source "$HOME/.nvm/nvm.sh"
 nvm use
 npm run dev
 ```
 
-Wait for Vite's `Local:` line, then open **http://127.0.0.1:5173/** without quotation marks. Keep Terminal running; **Control+C** stops it. Run `pwd` if npm reports `ENOENT`: it should show the project folder, not `/Users/erossi`.
+Wait for Vite's `Local:` line, then open **http://127.0.0.1:5173/** without quotation marks. Keep Terminal running; **Control+C** stops it. Run `pwd` if npm reports `ENOENT`: it should show the project folder, not your home folder.
 
 If a server is already running, use its link. If port 5173 is occupied by something else, run `npm run dev -- --port 5174` and open the printed URL.
 
@@ -50,9 +50,9 @@ On mobile, the compact **Main menu** button opens navigation; Escape closes it. 
 
 The overview keeps its radar links and a short three-step guide. Expand **Understand the three opportunity types** for category definitions. Typography uses the device's native system fonts, including Apple's system font on Apple devices; no downloaded font, key or external font service is required. Other devices use their system sans-serif fallback.
 
-The interface has a **light theme** (white and soft blue) and a **dark theme** (deep navy). It follows the device's setting until you choose one with the sun/moon button in the header; the choice is remembered in this browser. Controls are rounded and pill-shaped. Pages rise in on navigation, cards cascade in and lift on hover, and in supporting browsers a clicked card morphs into the detail page heading. Saving, filter chips and checklist ticks have small animations. All motion is in `src/motion.css` and switches off when the device asks for reduced motion. Both palettes, as colour tokens, and the card design are in `src/night-theme.css`.
+The interface has a **light theme** (white and soft blue) and a **dark theme** (deep navy). It follows the device's setting until you choose one with the sun/moon button in the header; the choice is remembered in this browser. Controls are rounded and pill-shaped. Pages rise in on navigation, cards cascade in and lift on hover, and in supporting browsers a clicked card morphs into the detail page heading. Saving, filter chips and checklist ticks have small animations. With a mouse, cards catch a soft light and lean slightly towards the pointer; in browsers with scroll-driven animation, content rises in as it enters the screen and a thin bar along the top shows reading progress. Colour drifts slowly behind every page and the overview's numbers count up to their real values. All motion is in `src/motion.css` and switches off when the device asks for reduced motion. Every colour is a token in `src/night-theme.css`, written once as `light-dark(light value, dark value)`; layout and components are in `src/styles.css`. The header stays visible while scrolling, and the footer repeats the main links and the date of the latest source check.
 
-The research radar uses a smooth CSS sweep. Every five-second revolution pulses the light and crossfades one bold field name: Genomics → Neuroscience → Molecular biology → Biotechnology → Bioinformatics. The name is a normal link to filtered results; focusing it holds the destination stable. **Next research field** (the small right arrow) selects immediately and pauses the sweep, so all five fields remain usable with reduced motion or without waiting. Use the speaker button to enable quiet pings; sound starts only after that click. Pause and reduced-motion preferences stop the animation. It does not use WebGL. See [radar notes](docs/radar.md).
+The research radar is a small 3D scene: a DNA helix rising from a radar disc, drawn with WebGL by the site's own code (no 3D library), turning with the pointer and with scrolling. Where WebGL is unavailable it falls back to a flat CSS radar. Every five-second revolution pulses the light and crossfades one bold field name: Genomics → Neuroscience → Molecular biology → Biotechnology → Bioinformatics. The name is a normal link to filtered results; focusing it holds the destination stable. **Next research field** (the small right arrow) selects immediately and pauses the sweep, so all five fields remain usable with reduced motion or without waiting. Use the speaker button (also in the footer) to turn on quiet sound effects for the whole site: a ping per radar turn and short cues for saving and checklist ticks. Sound is off by default, starts only after that click, is generated in the browser with no audio files, and the choice is remembered on this device. Pause and reduced-motion preferences stop the animation. See [radar notes](docs/radar.md).
 
 ## Honest information labels
 
@@ -84,7 +84,7 @@ npm run status:report
 - **Formatting check** reports inconsistent source formatting without changing files. `npm run format` formats them.
 - **Status report** lists which real records need their official sources rechecked (deadline passed, closing soon, stale or unclear). It is read-only and offline. Add `-- --json` for machine-readable output.
 - `npm run test:watch` repeats tests while editing; press `q` to exit.
-- `npm run preview` serves an existing build at **http://127.0.0.1:4173/**. It does not deploy anything.
+- `npm run preview` serves an existing build at **http://127.0.0.1:4173/** with the same security headers as `public/_headers`, so the content security policy can be checked locally. It does not deploy anything.
 
 The axe tests use jsdom and cannot check rendered contrast or reflow. Browser verification must also cover the requested widths, keyboard focus, long filter labels, scroll restoration and actual reload behaviour.
 
@@ -94,11 +94,12 @@ The axe tests use jsdom and cannot check rendered contrast or reflow. Browser ve
 src/
   App.tsx                       Layout, routes, title and scroll restoration
   main.tsx                      React and BrowserRouter entry point
-  styles.css                    Tailwind, shared identity and responsive styles
+  styles.css                    Tailwind import, layout and every component (mobile-first)
   types/opportunity.ts          JSON-compatible records and evidence contracts
   data/realOpportunities.ts      Manually researched official-source snapshot
   data/opportunities.ts          Six separate fictional fixtures
-  lib/opportunities.ts          Repository, filtering, sorting, status and dates
+  lib/opportunities.ts          Repository, filtering, sorting, status, dates and catalogue facts
+  lib/monogram.ts               Decorative institution badge text and tint
   lib/evidence.ts               Honest field labels and evidence lookup
   lib/defineRealOpportunity.ts   Required explicit evidence and date validation
   lib/evidenceHelpers.ts        Shorthand for explicit evidence entries
@@ -112,16 +113,17 @@ src/
   lib/deviceContext.ts          Stable shared React context
   lib/useDevice.ts              Hook for accessing device state
   components/                   Shared cards, notices and checklist
-  components/radar/             CSS radar, field links and opt-in synthesised audio
+  components/radar/             3D helix radar (WebGL), CSS fallback and field links
   pages/                        Home, catalogue/saved, detail pages
-  night-theme.css               Light/dark blue palettes, radius tokens and card design
+  night-theme.css               Design tokens: both palettes, radii, shadows and easing
   motion.css                    Page, card and detail animations (reduced-motion safe)
   test/                         Behavioural, data and accessibility regressions
 docs/source-review.md            Source audit, review log and unresolved facts
 docs/status-updates.md           How to refresh statuses and deadlines
 scripts/status-report.mjs        Prints the status review (npm run status:report)
 public/_headers                 Security headers for Cloudflare Pages
-.github/workflows/ci.yml         Build and test checks; no deployment
+vite.config.ts                   Build, tests, and preview with the production security headers
+.github/workflows/ci.yml         Format, test, build and dependency-audit checks; no deployment
 AGENTS.md                        Project conventions
 ```
 
@@ -170,6 +172,6 @@ When you approve publishing, Cloudflare Pages can use:
 | Node             | `24.16.0` (`.node-version` or `NODE_VERSION`) |
 | Secrets          | None                                          |
 
-Pages provides SPA routing when no root `404.html` exists, so detail URLs can load directly. Verify direct links after any eventual deployment. `public/_headers` applies only on Pages, not Vite's local server. No paid services or public deployment have been added.
+Pages provides SPA routing when no root `404.html` exists, so detail URLs can load directly. Verify direct links after any eventual deployment. `public/_headers` is applied by Pages in production and by `npm run preview` locally (not by `npm run dev`). The policy allows scripts, styles, images and fonts from this site only, with no inline code, so do not add inline `<script>`/`<style>` tags or third-party embeds without updating it. No paid services or public deployment have been added.
 
 References: [Vite](https://vite.dev/guide/), [Tailwind](https://tailwindcss.com/docs/installation/using-vite), [Pages routing](https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering).

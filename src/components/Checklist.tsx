@@ -1,6 +1,7 @@
 import { Check, ListChecks, RotateCcw } from 'lucide-react'
 import type { Category } from '../types/opportunity'
 import { useDevice } from '../lib/useDevice'
+import { sound } from '../lib/sound'
 
 export const commonTasks = [
   {
@@ -81,12 +82,20 @@ export function Checklist({
           <input
             type="checkbox"
             checked={stored.includes(task.id)}
-            onChange={() => toggleTask(opportunityId, task.id)}
+            onChange={(event) => {
+              toggleTask(opportunityId, task.id)
+              // The last tick gets a short chime instead of the usual click.
+              if (!event.target.checked) sound.play('untick')
+              else if (checked.length === tasks.length - 1)
+                sound.play('complete')
+              else sound.play('tick')
+            }}
           />
           <span>{task.label}</span>
         </label>
       ))}
       <button
+        type="button"
         className="reset-checklist"
         onClick={() => resetChecklist(opportunityId)}
         disabled={checked.length === 0}

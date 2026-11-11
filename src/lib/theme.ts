@@ -28,6 +28,20 @@ export function applyStoredTheme(): void {
 }
 
 /**
+ * index.html ships one browser-toolbar colour per device setting. Once the
+ * visitor picks a theme, both must show the chosen page colour instead.
+ */
+function syncBrowserChrome(): void {
+  const page = getComputedStyle(document.documentElement).backgroundColor
+  if (!page) return
+  document
+    .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+    .forEach((meta) => {
+      meta.content = page
+    })
+}
+
+/**
  * The visible theme: an explicit choice if the visitor made one, otherwise
  * the device's light/dark setting (which CSS also follows on its own).
  */
@@ -55,6 +69,7 @@ export function useTheme() {
     const root = document.documentElement
     if (choice) root.dataset.theme = choice
     else delete root.dataset.theme
+    if (choice) syncBrowserChrome()
   }, [choice])
 
   const theme = choice ?? system

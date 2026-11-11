@@ -28,6 +28,25 @@ export const opportunityRepository = {
     allOpportunities.find((item) => item.slug === slug),
 }
 
+/** Real numbers for the overview and footer: size, reach and freshness. */
+export function catalogueFacts(items: readonly Opportunity[]) {
+  const countries = new Set(
+    items.flatMap(
+      (item) => item.countries ?? (item.country ? [item.country] : []),
+    ),
+  )
+  const checks = items
+    .map((item) => item.lastVerifiedDate)
+    .filter((date): date is string => Boolean(date))
+    .sort()
+  return {
+    records: items.length,
+    countries: countries.size,
+    /** The most recent field check of any record; older checks keep their own dates. */
+    latestCheck: checks.at(-1) ?? null,
+  }
+}
+
 export function applicationStatus(
   item: Opportunity,
   now = new Date(),

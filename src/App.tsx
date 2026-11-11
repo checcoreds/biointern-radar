@@ -1,11 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
-  ArrowUpRight,
   Bookmark,
   Menu,
   Moon,
   Sun,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react'
 import {
@@ -20,11 +21,17 @@ import { Brand } from './components/UI'
 import { HomePage } from './pages/HomePage'
 import { CataloguePage } from './pages/CataloguePage'
 import { OpportunityPage } from './pages/OpportunityPage'
-import { opportunityRepository } from './lib/opportunities'
+import {
+  catalogueFacts,
+  formatDate,
+  opportunityRepository,
+} from './lib/opportunities'
 import { DeviceProvider } from './lib/device'
 import { useDevice } from './lib/useDevice'
 import { getCatalogueReturn } from './lib/catalogueNavigation'
 import { useTheme } from './lib/theme'
+import { sound, useSoundStatus } from './lib/sound'
+import { installPointerLight } from './lib/pointerLight'
 
 const scrollPositions = new Map<string, number>()
 function storedScroll(key: string): number | undefined {
@@ -111,22 +118,50 @@ function RouteEffects() {
   ])
   return null
 }
+function NotFound() {
+  return (
+    <div className="container not-found">
+      <span className="eyebrow">OFF THE RADAR · 404</span>
+      <h1>This page hasn’t been mapped.</h1>
+      <p>Let’s get you back to exploring research pathways.</p>
+      <Link className="button button-primary" to="/opportunities">
+        Explore internships
+        <ArrowRight size={17} aria-hidden="true" />
+      </Link>
+    </div>
+  )
+}
 function Shell() {
   const { data, storageWarning } = useDevice()
   const { pathname } = useLocation()
   const { theme, toggle: toggleTheme } = useTheme()
+  const soundStatus = useSoundStatus()
   const [menuOpen, setMenuOpen] = useState(false)
+  const header = useRef<HTMLElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
+  // Count only records that still exist, so the badge matches the Saved page.
+  const savedCount = opportunityRepository
+    .listAll()
+    .filter((item) => data.savedIds.includes(item.id)).length
+  const { latestCheck } = catalogueFacts(opportunityRepository.list())
+  useEffect(installPointerLight, [])
   useEffect(() => {
     if (!menuOpen) return
-    const close = (event: KeyboardEvent) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMenuOpen(false)
         menuButton.current?.focus()
       }
     }
-    document.addEventListener('keydown', close)
-    return () => document.removeEventListener('keydown', close)
+    const onPointer = (event: PointerEvent) => {
+      if (!header.current?.contains(event.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onPointer)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onPointer)
+    }
   }, [menuOpen])
   return (
     <>
@@ -134,43 +169,28 @@ function Shell() {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <header className="site-header">
+      <div className="scroll-progress" aria-hidden="true" />
+      <header className="site-header" ref={header}>
         <div className="container header-inner">
           <Brand />
           <button
-            type="button"
-            className="theme-toggle"
-            aria-label={
-              theme === 'dark'
-                ? 'Switch to light theme'
-                : 'Switch to dark theme'
-            }
-            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? (
-              <Sun size={20} aria-hidden="true" />
-            ) : (
-              <Moon size={20} aria-hidden="true" />
-            )}
-          </button>
-          <button
             ref={menuButton}
-            className="menu-toggle"
+            type="button"
+            className="icon-button menu-toggle"
             aria-label="Main menu"
             aria-expanded={menuOpen}
             aria-controls="main-navigation"
             onClick={() => setMenuOpen((previous) => !previous)}
           >
             {menuOpen ? (
-              <X size={23} aria-hidden="true" />
+              <X size={22} aria-hidden="true" />
             ) : (
-              <Menu size={23} aria-hidden="true" />
+              <Menu size={22} aria-hidden="true" />
             )}
           </button>
           <nav
             id="main-navigation"
-            className={menuOpen ? 'is-open' : ''}
+            className={`site-nav ${menuOpen ? 'is-open' : ''}`}
             aria-label="Main navigation"
             onClick={() => setMenuOpen(false)}
           >
@@ -180,23 +200,36 @@ function Shell() {
             <NavLink to="/opportunities">Explore internships</NavLink>
             <NavLink
               to="/saved"
-              className="saved-nav"
-              aria-label={`Saved opportunities${data.savedIds.length ? ` (${data.savedIds.length})` : ''}`}
+              aria-label={`Saved opportunities${savedCount ? ` (${savedCount})` : ''}`}
             >
               <Bookmark size={16} aria-hidden="true" />
               Saved
-              {data.savedIds.length > 0 && (
-                <span className="saved-count">{data.savedIds.length}</span>
+              {savedCount > 0 && (
+                <span className="saved-count">{savedCount}</span>
               )}
             </NavLink>
-            <Link to="/#how-it-works" className="guide-nav">
-              How it works
-            </Link>
+            <Link to="/#how-it-works">How it works</Link>
           </nav>
-          <Link to="/opportunities" className="header-cta">
-            Find your next step
-            <ArrowUpRight size={16} aria-hidden="true" />
-          </Link>
+          <button
+            type="button"
+            className="icon-button theme-toggle"
+            aria-label={
+              theme === 'dark'
+                ? 'Switch to light theme'
+                : 'Switch to dark theme'
+            }
+            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+            onClick={() => {
+              toggleTheme()
+              sound.play('tick')
+            }}
+          >
+            {theme === 'dark' ? (
+              <Sun size={20} aria-hidden="true" />
+            ) : (
+              <Moon size={20} aria-hidden="true" />
+            )}
+          </button>
         </div>
       </header>
       {storageWarning && (
@@ -211,33 +244,55 @@ function Shell() {
             <Route path="/opportunities" element={<CataloguePage />} />
             <Route path="/saved" element={<CataloguePage savedOnly />} />
             <Route path="/opportunities/:slug" element={<OpportunityPage />} />
-            <Route
-              path="*"
-              element={
-                <div className="container not-found">
-                  <span className="eyebrow">OFF THE RADAR · 404</span>
-                  <h1>This page hasn’t been mapped.</h1>
-                  <p>Let’s get you back to exploring research pathways.</p>
-                  <Link className="button button-dark" to="/opportunities">
-                    Explore internships
-                    <ArrowRight size={17} aria-hidden="true" />
-                  </Link>
-                </div>
-              }
-            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </main>
       <footer className="site-footer">
         <div className="container footer-inner">
-          <div>
+          <div className="footer-brand">
             <Brand />
+            <p>
+              Life-sciences research internships in Europe. Facts carry their
+              official source and check date; unknowns stay marked.
+            </p>
+            <button
+              type="button"
+              className="sound-toggle"
+              aria-label={
+                soundStatus === 'on'
+                  ? 'Turn sound effects off'
+                  : 'Turn sound effects on'
+              }
+              aria-pressed={soundStatus === 'on'}
+              onClick={() =>
+                soundStatus === 'on' ? sound.turnOff() : void sound.turnOn()
+              }
+            >
+              {soundStatus === 'on' ? (
+                <Volume2 size={16} aria-hidden="true" />
+              ) : (
+                <VolumeX size={16} aria-hidden="true" />
+              )}
+              {soundStatus === 'on'
+                ? 'Sound effects on'
+                : soundStatus === 'unavailable'
+                  ? 'Sound unavailable in this browser'
+                  : 'Sound effects off'}
+            </button>
           </div>
-          <div className="footer-right">
-            <span className="footer-demo">
-              Manual collection · separate fictional demos
-            </span>
-          </div>
+          <nav className="footer-nav" aria-label="Footer">
+            <Link to="/opportunities">Explore internships</Link>
+            <Link to="/saved">Saved</Link>
+            <Link to="/#how-it-works">How it works</Link>
+          </nav>
+          <p className="footer-note">
+            Maintained by hand from official sources
+            {latestCheck ? `; latest check ${formatDate(latestCheck)}` : ''}.
+            Always confirm details with the organiser before applying. Saved
+            items and checklists stay on this device. Fictional demos are kept
+            separate.
+          </p>
         </div>
       </footer>
     </>

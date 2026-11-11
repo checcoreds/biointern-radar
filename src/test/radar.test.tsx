@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SweepRadar, sweepFields } from '../components/radar/SweepRadar'
+import { sound } from '../lib/sound'
 
 const renderRadar = () =>
   render(
@@ -15,7 +16,10 @@ function revolution() {
   Object.defineProperty(event, 'animationName', { value: 'flat-radar-turn' })
   fireEvent(document.querySelector('.flat-radar-sweep')!, event)
 }
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  act(() => sound.turnOff())
+  vi.unstubAllGlobals()
+})
 
 describe('Flat animated research radar', () => {
   it('exposes one current field link and cycles through all five real catalogue URLs', () => {
@@ -179,7 +183,7 @@ describe('Flat animated research radar', () => {
     if (original) Object.defineProperty(document, 'hidden', original)
     else Reflect.deleteProperty(document, 'hidden')
   })
-  it('creates audio only after a click, beeps once per turn, and closes it on unmount', async () => {
+  it('creates audio only after a click, pings once per turn, and closes it when sound is turned off', async () => {
     const oscillator = {
       type: '',
       frequency: {
@@ -213,21 +217,28 @@ describe('Flat animated research radar', () => {
     const user = userEvent.setup()
     const view = renderRadar()
     expect(Audio).not.toHaveBeenCalled()
-    await user.click(screen.getByRole('button', { name: 'Enable radar sound' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Turn sound effects on' }),
+    )
     expect(
-      screen.getByRole('button', { name: 'Mute radar sound' }),
+      screen.getByRole('button', { name: 'Turn sound effects off' }),
     ).toHaveAttribute('aria-pressed', 'true')
     expect(context.createOscillator).toHaveBeenCalledTimes(1)
     revolution()
     expect(context.createOscillator).toHaveBeenCalledTimes(2)
+    // Sound is a site-wide choice, so leaving the page keeps it running.
     view.unmount()
+    expect(context.close).not.toHaveBeenCalled()
+    act(() => sound.turnOff())
     expect(context.close).toHaveBeenCalledOnce()
   })
   it('handles unavailable audio without breaking the visual radar or navigation', async () => {
     vi.stubGlobal('AudioContext', undefined)
     const user = userEvent.setup()
     renderRadar()
-    await user.click(screen.getByRole('button', { name: 'Enable radar sound' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Turn sound effects on' }),
+    )
     expect(screen.getByRole('status')).toHaveTextContent('Sound is unavailable')
     revolution()
     expect(document.querySelector('.flat-radar')).toHaveAttribute(
@@ -236,7 +247,7 @@ describe('Flat animated research radar', () => {
     )
     expect(screen.getAllByRole('link')).toHaveLength(1)
   })
-  it('closes a pending audio context if navigation happens before audio resumes', async () => {
+  it('closes a pending audio context if sound is turned off before audio resumes', async () => {
     let resume!: () => void
     const context = {
       state: 'running',
@@ -255,13 +266,15 @@ describe('Flat animated research radar', () => {
       }),
     )
     const user = userEvent.setup()
-    const view = renderRadar()
-    await user.click(screen.getByRole('button', { name: 'Enable radar sound' }))
-    view.unmount()
-    expect(context.close).toHaveBeenCalledOnce()
+    renderRadar()
+    await user.click(
+      screen.getByRole('button', { name: 'Turn sound effects on' }),
+    )
+    act(() => sound.turnOff())
     await act(async () => resume())
+    expect(context.close).toHaveBeenCalledOnce()
     expect(
-      screen.queryByRole('button', { name: 'Mute radar sound' }),
-    ).not.toBeInTheDocument()
+      screen.getByRole('button', { name: 'Turn sound effects on' }),
+    ).toHaveAttribute('aria-pressed', 'false')
   })
 })
