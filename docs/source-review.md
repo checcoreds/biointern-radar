@@ -16,7 +16,7 @@ The catalogue is **Europe-only**. Records are programme/route snapshots, not a c
   - Status and deadline: EPFL (deadline time confirmed on the application page as 23:59 CET), DAAD, VBC (still opens 15 November), ETH (deadline time zone still unclear), Karolinska (via the Amgen Scholars site) and Biozentrum (still opens 4 January 2027).
   - Deadline only: UNIL and MPIIB. UNIL's page has no explicit “open” wording, so its status keeps the 28 October check; MPIIB's status keeps the 10 November check of the application portal.
   - Not rechecked (all checked 10 November): LMU, Pasteur and Cambridge Amgen Scholars, and the EMBL, IMP, CRG and Champalimaud enquiry routes.
-  - Looked for new programmes: ISTA's ISTernship appears paused and the University of Zurich BUSS appears cancelled (search results only, official pages not read), so neither was added.
+  - Looked for new programmes and added none: no candidate had a published 2027 call. See “Leads to recheck” below.
 
 ## Current collection (15 records)
 
@@ -37,6 +37,19 @@ The catalogue is **Europe-only**. Records are programme/route snapshots, not a c
 | IMP master/research internships      | No advertised vacancy (general enquiries) | None                          | [Master internships](https://www.imp.ac.at/career/master-internships)                                                                                |
 | CRG internships                      | No advertised vacancy (year-round route)  | None                          | [Undergraduates and masters](https://www.crg.eu/en/content/training/undergraduates-and-masters)                                                      |
 | Champalimaud Research internships    | No advertised vacancy (year-round form)   | None                          | [Education](https://fchampalimaud.org/champalimaud-research/education)                                                                               |
+
+## Leads to recheck
+
+These are **not records** and nothing here is verified. They come from web-search results on 11 November 2026; the official pages were not read. Recheck each official page before adding anything.
+
+| Programme                               | What the search suggested                                                     | Official page to read                                                                                                                   |
+| --------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| CNIO Summer Training Programme, Madrid  | No 2027 call yet; earlier rounds closed around late March                     | [Undergraduate students](https://www.cnio.es/en/education-and-career-development/career-development-programmes/undergraduate-students/) |
+| IMB Mainz International Summer School   | No 2027 call found; unclear whether the school still runs                     | [International Summer School](https://imb.de/students-postdocs/international-summer-school)                                             |
+| Francis Crick Institute summer students | 2026 round closed; UK universities only, with widening-participation criteria | [Summer students](https://www.crick.ac.uk/careers-and-study/students/summer-students)                                                   |
+| Helmholtz Munich epigenetics internship | Only a 2024 page surfaced                                                     | [Summer internship](https://www.helmholtz-munich.de/cross-disciplinary-initiatives/epigenetics/summer-internship)                       |
+| ISTA ISTernship, Austria                | Reported as paused for the 2026 and 2027 cycles                               | [ISTA careers in science](https://ista.ac.at/en/jobs/careers-in-science/)                                                               |
+| University of Zurich BUSS               | Reported as cancelled until further notice                                    | [Undergraduate Summer School](https://www.biologie.uzh.ch/de/Fuer-Biologiestudierende/UndergraduateSummerSchool.html)                   |
 
 ## Deliberate uncertainties
 
