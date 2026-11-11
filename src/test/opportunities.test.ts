@@ -269,6 +269,7 @@ describe('Explicit verification contract', () => {
   it('preserves distinct field dates when just one fact is rechecked', () => {
     const record = input()
     const url = record.evidence.funding.sourceUrl!
+    const deadlineChecked = record.evidence.deadline.checkedAt
     record.sources.push({
       title: 'Funding recheck',
       url,
@@ -277,7 +278,8 @@ describe('Explicit verification contract', () => {
     record.evidence.funding.checkedAt = '2026-11-12'
     const result = defineRealOpportunity(record)
     expect(result.lastVerifiedDate).toBe('2026-11-12')
-    expect(result.evidence!.deadline!.checkedAt).toBe('2026-11-10')
+    expect(deadlineChecked).not.toBe('2026-11-12')
+    expect(result.evidence!.deadline!.checkedAt).toBe(deadlineChecked)
     expect(result.evidence!.country!.checkedAt).toBe('2026-10-28')
   })
   it('rechecks DAAD eligibility without claiming a new check for unrelated fields', () => {

@@ -12,10 +12,15 @@ The catalogue is **Europe-only**. Records are programme/route snapshots, not a c
   - Rewrote VBC (the 2027 cycle is now named), ETH (open since 1 November) and LMU (open, and the application page moved to `/apply_active/`).
   - Replaced the closed Karolinska 2026 archive with the 2027 cycle.
   - Added Institut Pasteur and Cambridge Amgen Scholars 2027, Biozentrum Basel Research Summer 2027, the MPIIB Berlin international internship 2027, and CRG and Champalimaud year-round lab-enquiry routes.
+- **11 November 2026:** rechecked nine records before the site's first public deployment. Nothing had closed or moved.
+  - Status and deadline: EPFL (deadline time confirmed on the application page as 23:59 CET), DAAD, VBC (still opens 15 November), ETH (deadline time zone still unclear), Karolinska (via the Amgen Scholars site) and Biozentrum (still opens 4 January 2027).
+  - Deadline only: UNIL and MPIIB. UNIL's page has no explicit “open” wording, so its status keeps the 28 October check; MPIIB's status keeps the 10 November check of the application portal.
+  - Not rechecked (all checked 10 November): LMU, Pasteur and Cambridge Amgen Scholars, and the EMBL, IMP, CRG and Champalimaud enquiry routes.
+  - Looked for new programmes: ISTA's ISTernship appears paused and the University of Zurich BUSS appears cancelled (search results only, official pages not read), so neither was added.
 
 ## Current collection (15 records)
 
-| Record                               | Status on 10 Nov 2026                     | Deadline                      | Official source                                                                                                                                      |
+| Record                               | Status (10–11 Nov 2026 checks)            | Deadline                      | Official source                                                                                                                                      |
 | ------------------------------------ | ----------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | EPFL Life Sciences SRP 2027          | Open                                      | 15 Nov 2026, 23:59 CET        | [Call](https://www.epfl.ch/schools/sv/education/summer-research-program/)                                                                            |
 | UNIL SUR 2027                        | Open (status from 28 Oct check)           | 15 Nov 2026, midnight CET     | [Programme](https://courses.unil.ch/fbm/cours/4247)                                                                                                  |

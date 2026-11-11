@@ -10,7 +10,7 @@ React, TypeScript, Vite, Tailwind. Data remains local and JSON-compatible for la
 
 ## Information integrity
 
-- `src/data/realOpportunities.ts` is a manually researched official-source snapshot of European programmes and general lab-enquiry routes, not a promise of current vacancies. First checked 28 October 2026; statuses rechecked and records added 10 November 2026 (see the log in `docs/source-review.md`). Refresh statuses with `npm run status:report` and `docs/status-updates.md`; the report is read-only and must never change a status by itself.
+- `src/data/realOpportunities.ts` is a manually researched official-source snapshot of European programmes and general lab-enquiry routes, not a promise of current vacancies. First checked 28 October 2026; statuses rechecked and records added 10 November 2026, with nine records' statuses or deadlines rechecked again on 11 November 2026 (see the log in `docs/source-review.md`). Refresh statuses with `npm run status:report` and `docs/status-updates.md`; the report is read-only and must never change a status by itself.
 - `src/data/opportunities.ts` contains six fictional fixtures, available only in the separate demo collection or saved records. Keep `isSample`, fictional institutions and no official application links.
 - Preserve a record's named cycle. Closed historical records must not masquerade as next-year openings. A future deadline does not prove applications are open.
 - Every real factual field has evidence: `source-checked`, `not-stated`, `not-checked`, `not-applicable`, or `unclear`, with the source URL, actual check date, and relevant notes. Source checks do not verify unrelated fields.

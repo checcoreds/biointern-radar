@@ -7,7 +7,7 @@ description: Check that BioIntern Radar is ready, then commit and, with the user
 
 Pushing to the GitHub repository's main branch redeploys the public Cloudflare site (static files, configured in `wrangler.jsonc`). So a push is a public deployment, and `AGENTS.md` requires asking before one. An earlier yes does not cover a later push.
 
-Live site URL: _not set yet. Replace this line with the address once the first Cloudflare deployment has finished._
+Live site URL: https://biointern-radar.checcoreds.workers.dev (first deployed 11 November 2026).
 
 ## 1. Checks that must pass
 

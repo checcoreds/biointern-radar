@@ -13,6 +13,7 @@ import type { Opportunity } from '../types/opportunity'
 // no default date.
 const OCT_28 = '2026-10-28'
 const NOV_10 = '2026-11-10'
+const NOV_11 = '2026-11-11'
 
 const amgenEuropeNote =
   'Europe-wide Amgen Scholars rule published on the official Amgen Scholars site; the host may add requirements.'
@@ -125,9 +126,14 @@ export const realOpportunities: readonly Opportunity[] = [
         checkedAt: '2026-10-28',
       },
       {
-        title: 'Status and deadline recheck',
+        title: 'Status recheck',
         url: 'https://www.epfl.ch/schools/sv/education/summer-research-program/',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
+      },
+      {
+        title: 'Deadline and cut-off time recheck',
+        url: 'https://www.epfl.ch/schools/sv/education/summer-research-program/how-to-apply/',
+        checkedAt: '2026-11-11',
       },
     ],
     evidence: {
@@ -212,14 +218,16 @@ export const realOpportunities: readonly Opportunity[] = [
       deadline: {
         state: 'source-checked',
         sourceUrl:
-          'https://www.epfl.ch/schools/sv/education/summer-research-program/',
-        checkedAt: '2026-11-10',
+          'https://www.epfl.ch/schools/sv/education/summer-research-program/how-to-apply/',
+        checkedAt: '2026-11-11',
+        note: 'The application page gives 15 November 2026, 23:59 CET.',
       },
       applicationStatus: {
         state: 'source-checked',
         sourceUrl:
           'https://www.epfl.ch/schools/sv/education/summer-research-program/',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
+        note: 'The call page says 2027 applications are open and links to the application form.',
       },
       applicationRoute: {
         state: 'source-checked',
@@ -283,7 +291,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Deadline recheck',
         url: 'https://courses.unil.ch/fbm/cours/4247',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
       },
     ],
     evidence: {
@@ -355,7 +363,7 @@ export const realOpportunities: readonly Opportunity[] = [
       deadline: {
         state: 'source-checked',
         sourceUrl: 'https://courses.unil.ch/fbm/cours/4247',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
         note: 'The source says midnight CET on 15 November; confirm the exact cut-off rather than assuming a minute.',
       },
       applicationStatus: {
@@ -434,7 +442,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Status and deadline recheck',
         url: 'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
       },
     ],
     evidence: {
@@ -520,13 +528,14 @@ export const realOpportunities: readonly Opportunity[] = [
         state: 'source-checked',
         sourceUrl:
           'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
       },
       applicationStatus: {
         state: 'source-checked',
         sourceUrl:
           'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-10',
+        checkedAt: '2026-11-11',
+        note: 'The internship database is open from 15 October to 30 November 2026.',
       },
       applicationRoute: {
         state: 'source-checked',
@@ -863,6 +872,11 @@ export const realOpportunities: readonly Opportunity[] = [
         url: VBC_APPLY,
         checkedAt: NOV_10,
       },
+      {
+        title: 'Opening date and deadline recheck',
+        url: VBC_APPLY,
+        checkedAt: NOV_11,
+      },
       { title: 'Programme and support', url: VBC_PROGRAMME, checkedAt: OCT_28 },
       { title: 'Fees FAQ', url: VBC_FAQ, checkedAt: OCT_28 },
     ],
@@ -887,12 +901,12 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(VBC_APPLY, NOV_10),
       deadline: checked(
         VBC_APPLY,
-        NOV_10,
+        NOV_11,
         'The 2027 timetable gives 11 January 2027 without a time of day. Confirm the exact cut-off.',
       ),
       applicationStatus: checked(
         VBC_APPLY,
-        NOV_10,
+        NOV_11,
         'Applications open on 15 November 2026; the application links say they will be available then.',
       ),
       applicationRoute: checked(VBC_APPLY, NOV_10),
@@ -948,6 +962,11 @@ export const realOpportunities: readonly Opportunity[] = [
         url: AMGEN_EUROPE,
         checkedAt: NOV_10,
       },
+      {
+        title: 'Opening and deadline recheck',
+        url: ETH_MAIN,
+        checkedAt: NOV_11,
+      },
       { title: 'How to apply', url: ETH_APPLY, checkedAt: OCT_28 },
       {
         title: 'News post with different deadline time zone',
@@ -984,12 +1003,12 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(AMGEN_EUROPE, NOV_10),
       deadline: unclear(
         ETH_MAIN,
-        NOV_10,
+        NOV_11,
         'Main page: 1 February 2027, 12.00 noon (CET). A news post checked on 28 October said noon GMT.',
       ),
       applicationStatus: checked(
         ETH_MAIN,
-        NOV_10,
+        NOV_11,
         'The main page lists “Open: 1 November 2026”.',
       ),
       applicationRoute: checked(ETH_APPLY, OCT_28),
@@ -1132,7 +1151,12 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Amgen Scholars: 2027 applications open',
         url: AMGEN_HOME,
-        checkedAt: NOV_10,
+        checkedAt: NOV_11,
+      },
+      {
+        title: 'Karolinska deadline recheck',
+        url: AMGEN_KI,
+        checkedAt: NOV_11,
       },
     ],
     evidence: {
@@ -1162,10 +1186,10 @@ export const realOpportunities: readonly Opportunity[] = [
       duration: checked(AMGEN_KI, NOV_10),
       period: checked(AMGEN_KI, NOV_10),
       dates: checked(AMGEN_KI, NOV_10),
-      deadline: checked(AMGEN_KI, NOV_10, 'No time of day is stated.'),
+      deadline: checked(AMGEN_KI, NOV_11, 'No time of day is stated.'),
       applicationStatus: checked(
         AMGEN_HOME,
-        NOV_10,
+        NOV_11,
         'The Amgen Scholars site says Summer 2027 applications for Europe are now open. KI’s own portal was not checked.',
       ),
       applicationRoute: checked(AMGEN_EUROPE, NOV_10),
@@ -1399,6 +1423,11 @@ export const realOpportunities: readonly Opportunity[] = [
         url: BIOZENTRUM,
         checkedAt: NOV_10,
       },
+      {
+        title: 'Application window recheck',
+        url: BIOZENTRUM,
+        checkedAt: NOV_11,
+      },
     ],
     evidence: {
       country: checked(BIOZENTRUM, NOV_10),
@@ -1429,12 +1458,12 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(BIOZENTRUM, NOV_10),
       deadline: checked(
         BIOZENTRUM,
-        NOV_10,
+        NOV_11,
         '28 February 2027, 12.00 noon CET.',
       ),
       applicationStatus: checked(
         BIOZENTRUM,
-        NOV_10,
+        NOV_11,
         'Applications can be submitted from 4 January 2027.',
       ),
       applicationRoute: checked(BIOZENTRUM, NOV_10),
@@ -1483,6 +1512,7 @@ export const realOpportunities: readonly Opportunity[] = [
     sourceUrl: MPIIB,
     sources: [
       { title: 'MPIIB-ISI call and timeline', url: MPIIB, checkedAt: NOV_10 },
+      { title: 'Deadline recheck', url: MPIIB, checkedAt: NOV_11 },
       { title: 'MPIIB-ISI FAQ', url: MPIIB_FAQ, checkedAt: NOV_10 },
       { title: 'Application guide', url: MPIIB_GUIDE, checkedAt: NOV_10 },
       {
@@ -1512,7 +1542,7 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(MPIIB, NOV_10),
       deadline: checked(
         MPIIB,
-        NOV_10,
+        NOV_11,
         'No time is given with the date. The FAQ says the portal closes automatically “after midnight CET”; confirm the exact cut-off.',
       ),
       applicationStatus: checked(
