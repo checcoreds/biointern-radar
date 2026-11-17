@@ -111,6 +111,17 @@ Added at the user's request: a WebGL helix-and-radar hero, pointer light and til
 - **Not checked:** how the sounds actually sound (only that the right audio calls are made), frame rate on real phones, Safari and Firefox (Firefox lacks scroll-driven animation and should show the timed entrances instead), screen readers, and reduced motion in a real browser.
 - `src/components/radar/radarAudio.ts` is no longer imported (replaced by `src/lib/sound.ts`); it is left in place pending the user's approval to delete it.
 
+## Focal-series overview redesign (17 November 2026)
+
+Redesigned the overview with the scrollcraft skill at the user's request. The brief was self-authored under the creative authority the owner gave (`scrollcraft/builds/biointern-radar/BRIEF.md`). No image generation was used: there is no generation key, and the project rules require asking before a paid service, so every plane is rendered in code.
+
+- **169 tests passed** (10 new: evidence counts, scroll-progress maths, evidence tags never claiming a check that did not happen, the fact sheet's six facts and its link, every gauge plane existing, the search close navigating to the filtered catalogue, a deterministic cell field). TypeScript/Vite build and formatting passed.
+- Screenshots in headless Chrome with software WebGL at 1440px light and dark through every plane (hero opening and mid-rack, scatter, focus pull at 8%, 35–40% and 95%, evidence, collection, protocol, search), at 390px light and 320px dark, and with reduced motion. Fixed during review: a hard edge where the cell field met the hero's lower boundary, a too-faint start to the focus pull, an over-tall lead card, two evidence colours that looked alike, and a blue-to-violet progress bar.
+- No horizontal overflow on the overview, catalogue, a detail page, Saved or an unknown URL at 320, 390, 768 and 1440px. Under reduced motion the focus section is 0.83 viewport heights with the record fully resolved.
+- The production build under the strict content security policy drew both WebGL planes, loaded `/grain.svg`, resolved the fact sheet, and logged no policy violations, failed requests or errors.
+- Feel check: the intended curve held for the hero (wonder), focus pull (clarity), evidence (trust), protocol (confidence) and search (resolve). The scatter sentence reads as a calm statement more than unease; the copy was left factual on purpose.
+- **Not checked:** real phones and their GPUs (frame rate, battery), Safari and Firefox, screen readers, and how the new focus sound sounds.
+
 ## Data limits
 
 The collection is manually maintained, **not a live feed** and **not 11 currently open vacancies**. It includes dated programme calls, a closed 2026 archive and two generic hosting routes with no advertised vacancy confirmed. The separate demo collection has no factual application links.

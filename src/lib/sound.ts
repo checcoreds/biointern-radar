@@ -9,7 +9,7 @@ import { useSyncExternalStore } from 'react'
 export const SOUND_STORAGE_KEY = 'biointern-radar:sound'
 
 export type SoundName =
-  'ping' | 'save' | 'unsave' | 'tick' | 'untick' | 'complete'
+  'ping' | 'save' | 'unsave' | 'tick' | 'untick' | 'complete' | 'focus'
 export type SoundStatus = 'off' | 'on' | 'unavailable'
 
 /** One note: frequency glide in hertz, start offset and length in seconds. */
@@ -24,6 +24,11 @@ const scores: Record<SoundName, readonly Note[]> = {
   unsave: [[660, 440, 0, 0.14]],
   tick: [[1175, 1175, 0, 0.06]],
   untick: [[784, 622, 0, 0.07]],
+  // A soft two-step settle when the overview's record locks into focus.
+  focus: [
+    [740, 740, 0, 0.07],
+    [988, 988, 0.06, 0.18],
+  ],
   complete: [
     [523, 523, 0, 0.2],
     [659, 659, 0.09, 0.2],

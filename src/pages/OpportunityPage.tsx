@@ -226,7 +226,6 @@ export function OpportunityPage() {
       <div className="detail-layout">
         <div className="detail-main">
           <section className="panel">
-            <span className="eyebrow">01 / The research</span>
             <h2>What will I do?</h2>
             <p>{item.description}</p>
             <dl>
@@ -241,7 +240,6 @@ export function OpportunityPage() {
             <SectionSources item={item} fields={['location', 'country']} />
           </section>
           <section className="panel">
-            <span className="eyebrow">02 / Eligibility</span>
             <h2>Am I eligible?</h2>
             {item.eligibilitySummary && (
               <p className="eligibility-highlight">
@@ -283,7 +281,6 @@ export function OpportunityPage() {
             />
           </section>
           <section className="panel">
-            <span className="eyebrow">03 / Timing</span>
             <h2>When does it happen?</h2>
             <dl className="detail-fields">
               <FactField item={item} field="dates" label="Programme dates" />
@@ -317,7 +314,6 @@ export function OpportunityPage() {
             />
           </section>
           <section className="panel">
-            <span className="eyebrow">04 / Funding & costs</span>
             <h2>What does it cost?</h2>
             <dl>
               <FactField item={item} field="funding" label="Funding category" />
@@ -342,7 +338,6 @@ export function OpportunityPage() {
             />
           </section>
           <section className="panel">
-            <span className="eyebrow">05 / Application materials</span>
             <h2>What must I prepare?</h2>
             <dl>
               <div className="detail-field">
@@ -366,7 +361,6 @@ export function OpportunityPage() {
             <SectionSources item={item} fields={['requiredDocuments']} />
           </section>
           <section className="panel">
-            <span className="eyebrow">06 / Your next step</span>
             <h2>How do I apply?</h2>
             <dl>
               <FactField

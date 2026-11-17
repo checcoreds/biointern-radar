@@ -5,7 +5,7 @@ export const evidenceLabels = {
   'not-stated': 'Not stated by the source',
   'not-checked': 'Not yet checked',
   'not-applicable': 'Not applicable',
-  unclear: 'Source unclear — confirm with organiser',
+  unclear: 'Source unclear: confirm with the organiser',
   sample: 'Fictional sample',
 } as const
 

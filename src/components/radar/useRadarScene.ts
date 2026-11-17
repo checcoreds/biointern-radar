@@ -5,6 +5,7 @@ import {
   type Rgb,
   type SceneColours,
 } from './helixScene'
+import { optics } from '../../lib/optics'
 
 /** One sweep of the CSS radar, which stays the clock for the 3D layer. */
 const SWEEP_MS = 5000
@@ -109,6 +110,7 @@ export function useRadarScene({
         sweep: sweepProgress(),
         yaw: easedX * 0.55 + window.scrollY * 0.0012 + Math.sin(time * 0.2) / 8,
         pitch: 0.42 + easedY * 0.1,
+        defocus: optics.helixDefocus,
       })
       const settling =
         Math.abs(pointerX - easedX) > 0.001 ||

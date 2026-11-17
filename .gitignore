@@ -7,3 +7,6 @@ coverage/
 .DS_Store
 *.local
 *.log
+
+# Scrollcraft verification output (screenshots)
+scrollcraft/builds/*/lab/

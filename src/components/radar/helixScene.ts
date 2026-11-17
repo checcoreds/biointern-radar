@@ -28,6 +28,8 @@ export interface SceneFrame {
   /** Camera angles in radians. */
   yaw: number
   pitch: number
+  /** 0 is in focus; 1 is fully defocused into soft discs. */
+  defocus?: number
 }
 
 export interface HelixScene {
@@ -119,6 +121,7 @@ uniform float u_time;
 uniform float u_sweep;
 uniform float u_yaw;
 uniform float u_pitch;
+uniform float u_defocus;
 uniform float u_pixel;
 uniform float u_light;
 uniform vec2 u_view;
@@ -130,6 +133,7 @@ uniform vec3 u_from;
 uniform vec3 u_to;
 varying vec4 v_colour;
 varying float v_light;
+varying float v_soft;
 
 const float TAU = 6.2831853;
 
@@ -206,9 +210,14 @@ void main() {
   gl_PointSize = max(
     1.0,
     size * depth * u_pixel * mix(1.7, 1.0, u_light) * mix(1.0, 0.75 + 0.25 * near, helix)
+      * (1.0 + u_defocus * 2.6)
   );
-  v_colour = vec4(colour, clamp(alpha, 0.0, 1.0) * mix(0.45, 1.0, near));
+  v_colour = vec4(
+    colour,
+    clamp(alpha, 0.0, 1.0) * mix(0.45, 1.0, near) / (1.0 + u_defocus * 2.2)
+  );
   v_light = u_light;
+  v_soft = u_defocus;
 }
 `
 
@@ -216,13 +225,15 @@ const fragmentShader = `
 precision mediump float;
 varying vec4 v_colour;
 varying float v_light;
+varying float v_soft;
 
 void main() {
   float d = length(gl_PointCoord - 0.5) * 2.0;
   if (d > 1.0) discard;
   float glow = (1.0 - d) * (1.0 - d) * 1.3;
   float crisp = smoothstep(1.0, 0.55, d);
-  float a = min(1.0, v_colour.a * mix(glow, crisp, v_light));
+  float disc = smoothstep(1.0, 0.2, d) * 0.9;
+  float a = min(1.0, v_colour.a * mix(mix(glow, crisp, v_light), disc, v_soft));
   // Premultiplied output. A low alpha in the dark theme adds light instead of
   // covering what is behind it.
   gl_FragColor = vec4(v_colour.rgb * a, a * mix(0.3, 1.0, v_light));
@@ -300,6 +311,7 @@ export function createHelixScene(canvas: HTMLCanvasElement): HelixScene | null {
     sweep: uniform('u_sweep'),
     yaw: uniform('u_yaw'),
     pitch: uniform('u_pitch'),
+    defocus: uniform('u_defocus'),
     pixel: uniform('u_pixel'),
     light: uniform('u_light'),
     view: uniform('u_view'),
@@ -344,6 +356,7 @@ export function createHelixScene(canvas: HTMLCanvasElement): HelixScene | null {
       gl.uniform1f(uniforms.sweep, frame.sweep)
       gl.uniform1f(uniforms.yaw, frame.yaw)
       gl.uniform1f(uniforms.pitch, frame.pitch)
+      gl.uniform1f(uniforms.defocus, frame.defocus ?? 0)
       gl.clear(gl.COLOR_BUFFER_BIT)
       gl.drawArrays(gl.POINTS, 0, points.length / FLOATS_PER_POINT)
     },

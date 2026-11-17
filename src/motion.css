@@ -137,11 +137,7 @@
     animation: chip-in 0.45s var(--ease-spring) backwards;
   }
 
-  /* The headline's colour shifts slowly; the main button catches the light. */
-  .hero h1 > span {
-    background-size: 220% 100%;
-    animation: headline-shift 9s ease-in-out infinite alternate;
-  }
+  /* The main button catches the light. */
   .button-primary:hover::after {
     transform: translateX(120%);
     transition: transform 0.7s var(--ease-out);
@@ -152,12 +148,21 @@
     animation: aurora-drift 32s ease-in-out infinite alternate;
   }
 
-  /* Soft light drifts behind the hero. */
-  .hero::before {
-    animation: drift-a 18s ease-in-out infinite alternate;
+  /* Dust in front of the lens floats on its own, apart from the scroll. */
+  .specimen-near i {
+    animation: dust-float 14s ease-in-out infinite alternate;
   }
-  .hero::after {
-    animation: drift-b 22s ease-in-out infinite alternate;
+  .specimen-near i:nth-child(2n) {
+    animation-duration: 19s;
+    animation-direction: alternate-reverse;
+  }
+
+  /* The overview's planes arrive by coming into focus. */
+  .scatter-line,
+  .scatter-note,
+  .evidence-copy,
+  .search-plane h2 {
+    animation: focus-in 0.6s var(--ease-out) backwards;
   }
 
   /* Disclosures open smoothly. */
@@ -184,8 +189,14 @@
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .cards-grid > :nth-child(n),
-    .step,
-    .pathway-disclosure {
+    .scatter-line,
+    .scatter-note,
+    .evidence-copy,
+    .evidence-figure,
+    .protocol-step,
+    .pathway-disclosure,
+    .search-plane h2,
+    .search-plane-form {
       animation: rise-in linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 70%;
@@ -199,21 +210,30 @@
   }
 }
 
+/* Things come into focus: soft and slightly small, then sharp. */
 @keyframes rise-in {
   from {
     opacity: 0;
-    translate: 0 28px;
+    filter: blur(8px);
+    translate: 0 22px;
     scale: 0.96;
+  }
+}
+@keyframes focus-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    scale: 0.97;
+  }
+}
+@keyframes dust-float {
+  to {
+    transform: translate(18px, -26px) scale(1.08);
   }
 }
 @keyframes progress-grow {
   to {
     transform: scaleX(1);
-  }
-}
-@keyframes headline-shift {
-  to {
-    background-position: 100% 0;
   }
 }
 @keyframes aurora-drift {
@@ -230,7 +250,8 @@
 @keyframes card-in {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.985);
+    filter: blur(6px);
+    transform: translateY(10px) scale(0.975);
   }
 }
 @keyframes chip-in {
@@ -271,16 +292,6 @@
 @keyframes tick-pop {
   50% {
     transform: scale(1.3);
-  }
-}
-@keyframes drift-a {
-  to {
-    transform: translate(90px, 60px) scale(1.15);
-  }
-}
-@keyframes drift-b {
-  to {
-    transform: translate(-80px, -50px) scale(1.1);
   }
 }
 @keyframes vt-fade-out {

@@ -80,10 +80,20 @@ body::after {
   inset: 0 0 auto;
   z-index: 60;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--headline-to));
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: 0 50%;
   pointer-events: none;
+}
+/* Fine film grain over the page light, so flat grounds do not band. */
+#root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('/grain.svg');
+  opacity: 0.05;
 }
 #root {
   display: flex;
@@ -262,7 +272,6 @@ svg {
 .filter-sidebar,
 .empty-state,
 .opportunity-summary,
-.step,
 .pathway-disclosure {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -611,59 +620,89 @@ input[type='checkbox']:checked::after {
 }
 
 /* ---------------------------------------------------------------------------
-   Overview: hero, featured records, guidance
+   Overview: a focus series down one optical axis. Each section is a focal
+   plane; things arrive by coming into focus. Plan: scrollcraft/builds/
+   biointern-radar/BRIEF.md. Scroll-linked values (--rack, --focus-p, --sheet,
+   --grow, --draw, --mx, --my) are written by the page's own scripts.
    --------------------------------------------------------------------------- */
-.hero {
+.focal-series {
+  position: relative;
+}
+.section-pad {
+  padding-block: 44px;
+}
+.section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4px 24px;
+  margin-bottom: 8px;
+}
+.section-heading h2,
+.plane-title {
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.cards-grid {
+  display: grid;
+  align-items: stretch;
+  gap: 16px;
+}
+
+/* Plane 1: the specimen. Four planes, four rates: far cells, the helix
+   radar, the headline, and dust passing the lens. */
+.specimen {
+  --rack: 0;
+  --mx: 0;
+  --my: 0;
   position: relative;
   isolation: isolate;
-  padding-block: 34px 22px;
-}
-.hero::before,
-.hero::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-}
-.hero::before {
-  top: -140px;
-  left: 0;
-  width: 420px;
-  height: 420px;
-  background: var(--hero-blob-a);
-}
-.hero::after {
-  right: 0;
-  bottom: -120px;
-  width: 360px;
-  height: 360px;
-  background: var(--hero-blob-b);
-}
-.hero-layout {
   display: grid;
-  gap: 26px;
+  align-items: center;
+  min-height: calc(100svh - var(--header-height));
+  padding-block: 26px 36px;
+  overflow: clip;
+}
+.specimen-far {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  translate: 0 calc(var(--rack) * -8vh);
+  /* Fade out before the section's lower edge so the field never ends in a
+     hard line as it scrolls away. */
+  mask-image: linear-gradient(black 0%, black 52%, transparent 92%);
+}
+.specimen-far canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.specimen-layout {
+  display: grid;
+  gap: 8px;
   align-items: center;
 }
-.hero h1 {
-  font-size: clamp(40px, 10vw, 68px);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+.specimen-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 580px;
 }
-.hero h1 > span {
-  color: transparent;
-  background: linear-gradient(
-    100deg,
-    var(--accent) 10%,
-    var(--headline-to) 90%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
+.specimen h1 {
+  font-size: clamp(42px, 11vw, 68px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+.specimen h1 > span {
+  color: var(--accent);
 }
 .hero-description {
-  max-width: 460px;
+  max-width: 440px;
   margin-top: 18px;
   color: var(--text-strong);
   font-size: 17px;
@@ -681,133 +720,441 @@ input[type='checkbox']:checked::after {
   padding-inline: 26px;
   font-size: 16px;
 }
-/* Three real numbers from the catalogue, not slogans. */
+/* Three computed facts, set as one caption line rather than metric tiles. */
 .hero-facts {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px 22px;
   margin-top: 26px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
 .hero-facts li {
-  display: grid;
-  gap: 1px;
-  padding: 10px 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
 }
 .hero-facts strong {
   color: var(--heading);
-  font-size: 19px;
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  font-size: 17px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .hero-facts span {
   color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 14px;
 }
 .hero-facts .count-up {
   display: inline-block;
   color: inherit;
   font: inherit;
-  font-variant-numeric: tabular-nums;
 }
-@media (min-width: 760px) {
-  .hero-description {
-    font-size: 18px;
-  }
-  .hero-facts {
-    gap: 10px;
-    margin-top: 32px;
-  }
-  .hero-facts li {
-    padding: 12px 20px;
-  }
-  .hero-facts strong {
-    font-size: 22px;
-  }
+.specimen-subject {
+  position: relative;
+  z-index: 0;
+  translate: calc(var(--mx) * 6px) calc(var(--rack) * -14vh + var(--my) * 6px);
 }
-@media (min-width: 900px) {
-  .hero {
-    padding-block: 64px 48px;
-  }
-  .hero-layout {
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-    gap: 48px;
-  }
-  .hero h1 {
-    font-size: clamp(52px, 5.4vw, 72px);
-  }
+.specimen-near {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.specimen-near i {
+  --sway: 20;
+  --pass: 60;
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--dust) 0%, transparent 68%);
+  filter: blur(var(--soft, 10px));
+  translate: calc(var(--mx) * var(--sway) * -1px)
+    calc(var(--rack) * var(--pass) * -1vh + var(--my) * var(--sway) * -1px);
+}
+.specimen-near i:nth-child(1) {
+  --soft: 16px;
+  --pass: 80;
+  top: 70%;
+  left: -110px;
+  width: 280px;
+  height: 280px;
+}
+.specimen-near i:nth-child(2) {
+  --soft: 10px;
+  --sway: 34;
+  top: -60px;
+  right: 26%;
+  width: 150px;
+  height: 150px;
+}
+.specimen-near i:nth-child(3) {
+  --soft: 22px;
+  --pass: 95;
+  --sway: 40;
+  right: -140px;
+  bottom: -120px;
+  width: 380px;
+  height: 380px;
+}
+.specimen-near i:nth-child(4),
+.specimen-near i:nth-child(5) {
+  display: none;
 }
 
-.section-pad {
-  padding-block: 44px;
+/* Plane 2: the scatter. Deliberately sparse: the silence before the peak. */
+.scatter-plane {
+  padding-block: 14vh 10vh;
 }
-.section-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 4px 24px;
-  margin-bottom: 8px;
+.scatter-line {
+  max-width: 22ch;
+  color: var(--heading);
+  font-size: clamp(28px, 5vw, 54px);
+  font-weight: 750;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
-.section-heading h2 {
-  font-size: clamp(26px, 2.8vw, 34px);
-  line-height: 1.2;
-  letter-spacing: -0.025em;
+.scatter-note {
+  max-width: 46ch;
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: 16px;
 }
-.cards-grid {
+
+/* Plane 3, the peak: scroll turns the fine-focus knob. */
+.focus-series {
+  --focus-p: 0;
+  --sheet: 0;
+  position: relative;
+  height: 230vh;
+}
+.focus-stage {
+  position: sticky;
+  top: var(--header-height);
   display: grid;
-  align-items: stretch;
-  gap: 16px;
+  align-items: center;
+  height: calc(100svh - var(--header-height));
+  overflow: clip;
+}
+.focus-layout {
+  display: grid;
+  gap: 18px;
+  align-items: center;
+}
+.focus-copy h2 {
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.focus-copy p {
+  max-width: 40ch;
+  margin-top: 10px;
+  color: var(--text-strong);
+  font-size: 15px;
+}
+.focus-knob {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+.focus-knob-dial {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--surface-raised) 52%, transparent 53%),
+    repeating-conic-gradient(
+      var(--text-muted) 0deg 2deg,
+      transparent 2deg 15deg
+    );
+  box-shadow:
+    0 8px 20px var(--shadow),
+    inset 0 1px 0 var(--gloss);
+  rotate: calc(var(--focus-p) * 720deg);
+}
+.focus-field {
+  position: relative;
+  isolation: isolate;
+}
+.focus-ghosts {
+  position: absolute;
+  inset: -12% -4%;
+  z-index: -1;
+  pointer-events: none;
+}
+.focus-ghost {
+  position: absolute;
+  color: var(--text-strong);
+  font-size: 15px;
+  font-weight: 650;
+  white-space: nowrap;
+  translate: -50% -50%;
+  opacity: 0.2;
+}
+.focus-ghost:nth-child(n + 5) {
+  display: none;
+}
+.fact-sheet {
+  position: relative;
+  isolation: isolate;
+  padding: 18px 18px 16px;
+}
+.fact-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  box-shadow:
+    0 22px 50px var(--shadow-strong),
+    inset 0 1px 0 var(--gloss);
+  opacity: var(--sheet);
+}
+.fact-sheet-head,
+.fact-row {
+  will-change: transform, filter, opacity;
+}
+.fact-sheet-kicker {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.fact-sheet h3 {
+  margin-top: 6px;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.fact-sheet-head p:last-child {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+.fact-sheet dl {
+  margin-top: 12px;
+}
+.fact-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  align-items: center;
+  padding-block: 9px;
+  border-top: 1px solid var(--line);
+}
+.fact-row dt {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.fact-value {
+  grid-column: 1;
+  color: var(--heading);
+  font-size: 15px;
+  font-weight: 650;
+}
+.fact-evidence {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tint);
+  color: var(--tint-text);
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.fact-sheet .text-link {
+  margin-top: 12px;
+  opacity: var(--sheet);
+}
+.fact-sheet .text-link:focus-visible {
+  opacity: 1;
+}
+
+/* Plane 4: the evidence, as a journal figure of real counts. */
+.evidence-plane {
+  padding-block: 64px;
+}
+.evidence-layout {
+  display: grid;
+  gap: 26px;
+  align-items: center;
+}
+.evidence-copy h2 {
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.evidence-copy p {
+  max-width: 46ch;
+  margin-top: 12px;
+  color: var(--text-strong);
+}
+.evidence-figure {
+  --grow: 1;
+  margin: 0;
+  padding: 22px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  box-shadow:
+    0 14px 34px var(--shadow),
+    inset 0 1px 0 var(--gloss);
+}
+.evidence-bar {
+  display: flex;
+  gap: 3px;
+  height: 18px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+.evidence-segment {
+  flex-basis: 0;
+  min-width: 4px;
+  scale: var(--grow) 1;
+  transform-origin: left;
+}
+.segment-checked {
+  background: var(--accent);
+}
+.segment-not-stated {
+  background: var(--status-unknown-line);
+}
+.segment-unclear {
+  background: var(--status-closed-line);
+}
+.segment-not-applicable {
+  background: var(--line-strong);
+}
+.segment-not-checked {
+  background: var(--text-muted);
+}
+.evidence-legend {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+.evidence-legend li {
+  display: grid;
+  grid-template-columns: 12px auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  font-size: 15px;
+}
+.evidence-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  translate: 0 1px;
+}
+.evidence-legend strong {
+  color: var(--heading);
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.evidence-figure figcaption {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.evidence-figure figcaption strong {
+  color: var(--heading);
+}
+
+/* Plane 5: the collection. One lead record and two beside it, never three
+   equal columns. */
+.collection-plane {
+  padding-block: 56px;
 }
 .home-cards {
   margin-top: 14px;
 }
-.how-section {
-  border-block: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface-sunken) 55%, transparent);
+
+/* Plane 6: the protocol, a line drawing itself between the steps. */
+.protocol-plane {
+  --draw: 1;
+  padding-block: 64px;
+  border-top: 1px solid var(--line);
 }
-.how-section .section-heading {
-  margin-bottom: 22px;
-}
-.steps-grid {
+.protocol-layout {
   display: grid;
-  gap: 14px;
+  gap: 24px;
 }
-.step {
+.protocol-layout > h2 {
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.protocol-track {
   position: relative;
-  padding: 22px 20px;
 }
-.step-number {
+.protocol-line {
+  position: absolute;
+  top: 22px;
+  left: 21px;
+  width: 2px;
+  height: calc(100% - 44px);
+  overflow: visible;
+}
+.protocol-line line {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw));
+  vector-effect: non-scaling-stroke;
+}
+.protocol-steps {
+  display: grid;
+  gap: 26px;
+}
+.protocol-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 18px;
+}
+.protocol-number {
+  position: relative;
+  grid-row: span 2;
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   border: 1px solid var(--chip-line);
-  border-radius: 15px;
-  background: var(--chip-bg);
+  border-radius: 50%;
+  background: var(--surface);
   color: var(--chip-text);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  box-shadow: 0 6px 16px var(--shadow);
 }
-.step h3 {
-  margin-top: 16px;
-  font-size: 20px;
+.protocol-step h3 {
+  align-self: end;
+  font-size: 19px;
   line-height: 1.3;
   letter-spacing: -0.02em;
 }
-.step p {
-  margin-top: 6px;
+.protocol-step p {
+  color: var(--text);
   font-size: 16px;
-  line-height: 1.6;
 }
 .pathway-disclosure {
-  margin-top: 14px;
+  margin-top: 26px;
   padding: 4px 20px;
   color: var(--text);
 }
@@ -832,25 +1179,231 @@ input[type='checkbox']:checked::after {
   color: var(--heading);
   font-weight: 700;
 }
+
+/* Plane 7, the deepest: a real input to start from. */
+.search-plane {
+  padding-block: 64px 88px;
+}
+.search-plane h2 {
+  max-width: 18ch;
+  font-size: clamp(28px, 4.2vw, 50px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.search-plane-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 720px;
+  margin-top: 26px;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--control-bg);
+  box-shadow:
+    0 18px 44px var(--shadow),
+    inset 0 1px 0 var(--gloss);
+}
+.search-plane-form:focus-within {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.search-plane-form > svg {
+  flex: none;
+  margin-left: 10px;
+  color: var(--text-muted);
+}
+.search-plane-form input {
+  flex: 1 1 160px;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--heading);
+  font-size: 17px;
+}
+.search-plane-form input::placeholder {
+  color: var(--text-muted);
+}
+.search-plane-form .button {
+  flex: 1 1 100%;
+}
+
+/* The overview's map: a fine-focus scale on the right edge. */
+.focus-gauge {
+  display: none;
+}
+
+@media (min-width: 680px) {
+  .specimen-near i:nth-child(4) {
+    --soft: 8px;
+    --sway: 28;
+    --pass: 40;
+    display: block;
+    top: 18%;
+    left: 44%;
+    width: 90px;
+    height: 90px;
+  }
+  .focus-ghost:nth-child(n + 5) {
+    display: block;
+  }
+  .fact-sheet {
+    padding: 24px 26px 20px;
+  }
+  .search-plane-form {
+    flex-wrap: nowrap;
+    border-radius: var(--radius-pill);
+  }
+  .search-plane-form .button {
+    flex: none;
+  }
+}
 @media (min-width: 760px) {
   .section-pad {
     padding-block: 64px;
   }
-  .steps-grid,
+  .hero-description {
+    font-size: 18px;
+  }
   .pathway-disclosure dl {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .pathway-disclosure dl {
     gap: 28px;
   }
-  .step {
-    padding: 26px 24px;
+}
+@media (min-width: 900px) {
+  .specimen {
+    padding-block: 40px 56px;
+  }
+  .specimen-layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 40px;
+  }
+  .specimen h1 {
+    font-size: clamp(56px, 5.8vw, 82px);
+  }
+  .specimen-near i:nth-child(5) {
+    --soft: 12px;
+    --sway: 46;
+    --pass: 120;
+    display: block;
+    bottom: 6%;
+    left: 30%;
+    width: 120px;
+    height: 120px;
+  }
+  .scatter-plane {
+    padding-block: 22vh 14vh;
+  }
+  .focus-series {
+    height: 260vh;
+  }
+  .focus-layout {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 56px;
+  }
+  .focus-knob {
+    display: flex;
+  }
+  .fact-sheet {
+    max-width: 580px;
+  }
+  .fact-sheet h3 {
+    font-size: 24px;
+  }
+  .evidence-plane {
+    padding-block: 96px;
+  }
+  .evidence-layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 56px;
+  }
+  .evidence-figure {
+    padding: 28px 30px 22px;
+  }
+  .collection-plane {
+    padding-block: 72px;
+  }
+  .protocol-plane {
+    padding-block: 96px;
+  }
+  .protocol-layout {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    gap: 56px;
+  }
+  .search-plane {
+    padding-block: 96px 128px;
   }
 }
 @media (min-width: 960px) {
   .home-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+  }
+  .home-cards > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 1320px) {
+  .focus-gauge {
+    display: block;
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    z-index: 30;
+    translate: 0 -50%;
+  }
+  .focus-gauge ol {
+    position: relative;
+    display: grid;
+  }
+  .focus-gauge ol::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: 8px;
+    bottom: 14px;
+    width: 1px;
+    background: var(--line-strong);
+  }
+  .focus-gauge button {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+    min-height: 30px;
+    padding: 0 0 0 10px;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 650;
+  }
+  .focus-gauge-tick {
+    width: 17px;
+    height: 1px;
+    background: currentColor;
+  }
+  .focus-gauge-label {
+    opacity: 0;
+    translate: 4px 0;
+  }
+  .focus-gauge:hover .focus-gauge-label,
+  .focus-gauge button:focus-visible .focus-gauge-label,
+  .focus-gauge [aria-current] .focus-gauge-label {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .focus-gauge [aria-current] {
+    color: var(--accent);
+  }
+  .focus-gauge [aria-current] .focus-gauge-tick {
+    width: 28px;
+    height: 2px;
   }
 }
 
@@ -1877,6 +2430,19 @@ progress::-moz-progress-bar {
    Accessibility fallbacks
    --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+  /* The focus series shows its resolved record, with no pinned travel. */
+  .focus-series {
+    height: auto;
+  }
+  .focus-stage {
+    position: static;
+    height: auto;
+    padding-block: 64px;
+  }
+  .focus-ghosts,
+  .focus-knob {
+    display: none;
+  }
   *,
   *::before,
   *::after {
@@ -1886,7 +2452,6 @@ progress::-moz-progress-bar {
   }
 }
 @media (forced-colors: active) {
-  .hero h1 > span,
   .button-primary {
     color: LinkText;
     background: none;

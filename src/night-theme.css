@@ -74,7 +74,8 @@
   --hero-blob-a: light-dark(#8bb8ff4d, #3f74ff33);
   --hero-blob-b: light-dark(#8fdcff40, #8a6bff22);
   --aurora-a: light-dark(#a9c8ff59, #2f5fe038);
-  --aurora-b: light-dark(#c9bbff40, #7a5cf02b);
+  --aurora-b: light-dark(#a6e3ff40, #1f8fd626);
+  --dust: light-dark(#3b82f62e, #86b6ff33);
   --spotlight: light-dark(#3b82f624, #86b6ff2e);
 
   /* Brand mark */
