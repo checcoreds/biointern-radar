@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { sampleOpportunities } from '../data/opportunities'
 import { realOpportunities } from '../data/realOpportunities'
-import { factKeys } from '../types/opportunity'
+import { factKeys, type Opportunity } from '../types/opportunity'
 import {
   defineRealOpportunity,
   type RealOpportunityInput,
@@ -273,12 +273,12 @@ describe('Explicit verification contract', () => {
     record.sources.push({
       title: 'Funding recheck',
       url,
-      checkedAt: '2026-11-12',
+      checkedAt: '2026-12-01',
     })
-    record.evidence.funding.checkedAt = '2026-11-12'
+    record.evidence.funding.checkedAt = '2026-12-01'
     const result = defineRealOpportunity(record)
-    expect(result.lastVerifiedDate).toBe('2026-11-12')
-    expect(deadlineChecked).not.toBe('2026-11-12')
+    expect(result.lastVerifiedDate).toBe('2026-12-01')
+    expect(deadlineChecked).not.toBe('2026-12-01')
     expect(result.evidence!.deadline!.checkedAt).toBe(deadlineChecked)
     expect(result.evidence!.country!.checkedAt).toBe('2026-10-28')
   })
@@ -308,7 +308,15 @@ it('finds a multi-country placement under each officially listed host country', 
 })
 
 describe('Deadline hints and status review', () => {
-  const epfl = realOpportunities.find((item) => item.id === 'epfl-srp-2027')!
+  // A fixed copy as it stood while its call was open, so these tests check
+  // the logic rather than whatever the live record says today.
+  const epfl: Opportunity = {
+    ...realOpportunities.find((item) => item.id === 'epfl-srp-2027')!,
+    applicationStatus: 'Open',
+  }
+  const catalogue = realOpportunities.map((item) =>
+    item.id === epfl.id ? epfl : item,
+  )
   it('counts whole days to a date-only deadline', () => {
     expect(daysUntil('2026-11-15', new Date('2026-11-10T22:00:00Z'))).toBe(5)
     expect(daysUntil('2026-11-15', new Date('2026-11-15T08:00:00Z'))).toBe(0)
@@ -326,7 +334,7 @@ describe('Deadline hints and status review', () => {
   })
   it('features open calls with the soonest deadlines', () => {
     const featured = featuredOpportunities(
-      realOpportunities,
+      catalogue,
       3,
       new Date('2026-11-10T12:00:00Z'),
     )
@@ -339,12 +347,9 @@ describe('Deadline hints and status review', () => {
     ).toBe(true)
   })
   it('flags elapsed deadlines and stale checks without changing records', () => {
-    const before = JSON.stringify(realOpportunities)
-    const reviews = reviewStatuses(
-      realOpportunities,
-      new Date('2026-12-20T12:00:00Z'),
-    )
-    expect(JSON.stringify(realOpportunities)).toBe(before)
+    const before = JSON.stringify(catalogue)
+    const reviews = reviewStatuses(catalogue, new Date('2026-12-20T12:00:00Z'))
+    expect(JSON.stringify(catalogue)).toBe(before)
     const epflReview = reviews.find((review) => review.id === 'epfl-srp-2027')!
     expect(epflReview.priority).toBe('urgent')
     expect(epflReview.displayedStatus).toBe('Closed')

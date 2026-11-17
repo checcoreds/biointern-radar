@@ -14,6 +14,7 @@ import type { Opportunity } from '../types/opportunity'
 const OCT_28 = '2026-10-28'
 const NOV_10 = '2026-11-10'
 const NOV_11 = '2026-11-11'
+const NOV_17 = '2026-11-17'
 
 const amgenEuropeNote =
   'Europe-wide Amgen Scholars rule published on the official Amgen Scholars site; the host may add requirements.'
@@ -53,6 +54,18 @@ const MPIIB_GUIDE =
   'https://www.mpiib-berlin.mpg.de/2158142/mpiib-isi-application-guide'
 const MPIIB_PORTAL =
   'https://jobs.mpiib-berlin.mpg.de/en/jobposting/604f37087895d872e50101dcf2dfa9afb0cb1e464/apply'
+const HELMHOLTZ_EPI =
+  'https://www.helmholtz-munich.de/en/epigenetics/summer-internship'
+const HELMHOLTZ_FAQ =
+  'https://www.helmholtz-munich.de/en/cross-disciplinary-initiatives/epigenetics/summer-internship/frequently-asked-questions'
+const HELMHOLTZ_DOCS =
+  'https://www.helmholtz-munich.de/en/cross-disciplinary-initiatives/epigenetics/summer-internship/required-documents'
+const FRIBOURG =
+  'https://www.bioinspired-materials.ch/en/education/summerschool/'
+const FRIBOURG_APPLY =
+  'https://www.bioinspired-materials.ch/en/education/summerschool/uri-application-process/'
+const FRIBOURG_FAQ =
+  'https://www.bioinspired-materials.ch/en/education/summerschool/frequently-asked-questions.html'
 const CRG = 'https://www.crg.eu/en/content/training/undergraduates-and-masters'
 const CHAMPALIMAUD = 'https://fchampalimaud.org/champalimaud-research/education'
 
@@ -77,7 +90,7 @@ export const realOpportunities: readonly Opportunity[] = [
     duration: '8 weeks',
     period: 'Summer',
     deadline: '2026-11-15',
-    applicationStatus: 'Open',
+    applicationStatus: 'Closed',
     applicationRoute:
       'Use the official online form. Prepare materials first: the form must be finished in one sitting.',
     verificationStatus: 'Source checked',
@@ -129,6 +142,11 @@ export const realOpportunities: readonly Opportunity[] = [
         title: 'Status recheck',
         url: 'https://www.epfl.ch/schools/sv/education/summer-research-program/',
         checkedAt: '2026-11-11',
+      },
+      {
+        title: 'Status after the deadline',
+        url: 'https://www.epfl.ch/schools/sv/education/summer-research-program/how-to-apply/',
+        checkedAt: NOV_17,
       },
       {
         title: 'Deadline and cut-off time recheck',
@@ -222,13 +240,11 @@ export const realOpportunities: readonly Opportunity[] = [
         checkedAt: '2026-11-11',
         note: 'The application page gives 15 November 2026, 23:59 CET.',
       },
-      applicationStatus: {
-        state: 'source-checked',
-        sourceUrl:
-          'https://www.epfl.ch/schools/sv/education/summer-research-program/',
-        checkedAt: '2026-11-11',
-        note: 'The call page says 2027 applications are open and links to the application form.',
-      },
+      applicationStatus: checked(
+        `https://www.epfl.ch/schools/sv/education/summer-research-program/how-to-apply/`,
+        NOV_17,
+        'The stated deadline, 15 November 2026 at 23:59 CET, has passed. On 17 November the page still said the application was open, which looks like wording not yet updated after the deadline.',
+      ),
       applicationRoute: {
         state: 'source-checked',
         sourceUrl:
@@ -263,7 +279,7 @@ export const realOpportunities: readonly Opportunity[] = [
     duration: '8 weeks',
     period: 'Summer',
     deadline: '2026-11-15',
-    applicationStatus: 'Open',
+    applicationStatus: 'Closed',
     applicationRoute:
       'Submit the online application and choose two lab heads. References share the 15 November deadline.',
     verificationStatus: 'Source checked',
@@ -292,6 +308,11 @@ export const realOpportunities: readonly Opportunity[] = [
         title: 'Deadline recheck',
         url: 'https://courses.unil.ch/fbm/cours/4247',
         checkedAt: '2026-11-11',
+      },
+      {
+        title: 'Status after the deadline',
+        url: 'https://courses.unil.ch/fbm/cours/4247',
+        checkedAt: NOV_17,
       },
     ],
     evidence: {
@@ -366,11 +387,11 @@ export const realOpportunities: readonly Opportunity[] = [
         checkedAt: '2026-11-11',
         note: 'The source says midnight CET on 15 November; confirm the exact cut-off rather than assuming a minute.',
       },
-      applicationStatus: {
-        state: 'source-checked',
-        sourceUrl: 'https://courses.unil.ch/fbm/cours/4247',
-        checkedAt: '2026-10-28',
-      },
+      applicationStatus: checked(
+        'https://courses.unil.ch/fbm/cours/4247',
+        NOV_17,
+        'The stated deadline, midnight CET on 15 November 2026, has passed. The page gives no explicit open or closed wording.',
+      ),
       applicationRoute: {
         state: 'source-checked',
         sourceUrl: 'https://courses.unil.ch/fbm/cours/4247',
@@ -442,7 +463,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Status and deadline recheck',
         url: 'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-11',
+        checkedAt: '2026-11-17',
       },
     ],
     evidence: {
@@ -528,13 +549,13 @@ export const realOpportunities: readonly Opportunity[] = [
         state: 'source-checked',
         sourceUrl:
           'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-11',
+        checkedAt: '2026-11-17',
       },
       applicationStatus: {
         state: 'source-checked',
         sourceUrl:
           'https://www.daad.de/rise/en/rise-germany/find-an-internship/what-applicants-need-to-know/',
-        checkedAt: '2026-11-11',
+        checkedAt: '2026-11-17',
         note: 'The internship database is open from 15 October to 30 November 2026.',
       },
       applicationRoute: {
@@ -857,7 +878,8 @@ export const realOpportunities: readonly Opportunity[] = [
     period: 'Summer',
     dates: 'Open Program: 1 July–31 August 2027',
     deadline: '2027-01-11',
-    applicationStatus: 'Upcoming',
+    applicationStatus: 'Open',
+    deadlineAt: '2027-01-11T23:00:00+01:00',
     applicationRoute:
       'Two-part application: an online form plus a PDF completed offline and uploaded before the deadline. Rank up to three group leaders. Decisions by 1 March 2027.',
     eligibilityDetails:
@@ -873,9 +895,9 @@ export const realOpportunities: readonly Opportunity[] = [
         checkedAt: NOV_10,
       },
       {
-        title: 'Opening date and deadline recheck',
+        title: 'Opening, links and deadline time',
         url: VBC_APPLY,
-        checkedAt: NOV_11,
+        checkedAt: NOV_17,
       },
       { title: 'Programme and support', url: VBC_PROGRAMME, checkedAt: OCT_28 },
       { title: 'Fees FAQ', url: VBC_FAQ, checkedAt: OCT_28 },
@@ -901,13 +923,13 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(VBC_APPLY, NOV_10),
       deadline: checked(
         VBC_APPLY,
-        NOV_11,
-        'The 2027 timetable gives 11 January 2027 without a time of day. Confirm the exact cut-off.',
+        NOV_17,
+        '11 January 2027 at 23:00 CET, in the online system.',
       ),
       applicationStatus: checked(
         VBC_APPLY,
-        NOV_11,
-        'Applications open on 15 November 2026; the application links say they will be available then.',
+        NOV_17,
+        'The portal opened on 17 November 2026 at noon (moved from 15 November), with live links for the Open Program and Talents for Future.',
       ),
       applicationRoute: checked(VBC_APPLY, NOV_10),
     },
@@ -965,7 +987,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Opening and deadline recheck',
         url: ETH_MAIN,
-        checkedAt: NOV_11,
+        checkedAt: NOV_17,
       },
       { title: 'How to apply', url: ETH_APPLY, checkedAt: OCT_28 },
       {
@@ -1003,12 +1025,12 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(AMGEN_EUROPE, NOV_10),
       deadline: unclear(
         ETH_MAIN,
-        NOV_11,
+        NOV_17,
         'Main page: 1 February 2027, 12.00 noon (CET). A news post checked on 28 October said noon GMT.',
       ),
       applicationStatus: checked(
         ETH_MAIN,
-        NOV_11,
+        NOV_17,
         'The main page lists “Open: 1 November 2026”.',
       ),
       applicationRoute: checked(ETH_APPLY, OCT_28),
@@ -1156,7 +1178,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Karolinska deadline recheck',
         url: AMGEN_KI,
-        checkedAt: NOV_11,
+        checkedAt: NOV_17,
       },
     ],
     evidence: {
@@ -1186,7 +1208,7 @@ export const realOpportunities: readonly Opportunity[] = [
       duration: checked(AMGEN_KI, NOV_10),
       period: checked(AMGEN_KI, NOV_10),
       dates: checked(AMGEN_KI, NOV_10),
-      deadline: checked(AMGEN_KI, NOV_11, 'No time of day is stated.'),
+      deadline: checked(AMGEN_KI, NOV_17, 'No time of day is stated.'),
       applicationStatus: checked(
         AMGEN_HOME,
         NOV_11,
@@ -1426,7 +1448,7 @@ export const realOpportunities: readonly Opportunity[] = [
       {
         title: 'Application window recheck',
         url: BIOZENTRUM,
-        checkedAt: NOV_11,
+        checkedAt: NOV_17,
       },
     ],
     evidence: {
@@ -1458,12 +1480,12 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(BIOZENTRUM, NOV_10),
       deadline: checked(
         BIOZENTRUM,
-        NOV_11,
+        NOV_17,
         '28 February 2027, 12.00 noon CET.',
       ),
       applicationStatus: checked(
         BIOZENTRUM,
-        NOV_11,
+        NOV_17,
         'Applications can be submitted from 4 January 2027.',
       ),
       applicationRoute: checked(BIOZENTRUM, NOV_10),
@@ -1512,7 +1534,7 @@ export const realOpportunities: readonly Opportunity[] = [
     sourceUrl: MPIIB,
     sources: [
       { title: 'MPIIB-ISI call and timeline', url: MPIIB, checkedAt: NOV_10 },
-      { title: 'Deadline recheck', url: MPIIB, checkedAt: NOV_11 },
+      { title: 'Deadline recheck', url: MPIIB, checkedAt: NOV_17 },
       { title: 'MPIIB-ISI FAQ', url: MPIIB_FAQ, checkedAt: NOV_10 },
       { title: 'Application guide', url: MPIIB_GUIDE, checkedAt: NOV_10 },
       {
@@ -1542,7 +1564,7 @@ export const realOpportunities: readonly Opportunity[] = [
       dates: checked(MPIIB, NOV_10),
       deadline: checked(
         MPIIB,
-        NOV_11,
+        NOV_17,
         'No time is given with the date. The FAQ says the portal closes automatically “after midnight CET”; confirm the exact cut-off.',
       ),
       applicationStatus: checked(
@@ -1551,6 +1573,195 @@ export const realOpportunities: readonly Opportunity[] = [
         'The 2027 application form was live on 10 November 2026.',
       ),
       applicationRoute: checked(MPIIB_GUIDE, NOV_10),
+    },
+  }),
+  defineRealOpportunity({
+    id: 'helmholtz-epigenetics-2027',
+    slug: 'helmholtz-munich-epigenetics-summer-2027',
+    title: 'Epigenetics Without Borders Summer Internship 2027',
+    institution: 'Helmholtz Munich',
+    country: 'Germany',
+    location: 'Neuherberg, near Munich; accommodation in Munich',
+    category: 'Structured programme',
+    scientificTopics: [
+      'Epigenetics',
+      'Genomics',
+      'Bioinformatics',
+      'Cell biology',
+    ],
+    cycleLabel: 'Summer 2027',
+    description:
+      'A two-month research stay in a wet or dry epigenetics lab, on topics such as chromatin, stem cells, spatial transcriptomics and deep learning.',
+    eligibleDegrees: ['Bachelor’s', 'Master’s'],
+    yearOfStudyRequirement:
+      'At least two years of university study completed and still enrolled over the summer; first-year master’s students can also apply.',
+    gpaRequirement: null,
+    requiredDocuments: [
+      'Certificate of enrolment covering the summer',
+      'Academic transcript',
+      'Motivation letter in English (one page)',
+      'CV in English (up to two pages)',
+    ],
+    funding: 'Funded',
+    fundingDetails:
+      'Paid accommodation in Munich and an allowance of €450 per month in total, described as a contribution to travel and living costs.',
+    costs: 'Bring your own health insurance.',
+    duration: '2 months',
+    period: 'Summer',
+    dates: 'Usually 1 July to about 31 August; 2027 dates not yet published',
+    deadline: null,
+    applicationStatus: 'Upcoming',
+    applicationRoute:
+      'Online application system once the 2027 call opens; email applications are not accepted. Until then you can register interest through the form on the official page.',
+    eligibilityDetails:
+      'Undergraduate or first-year master’s students with two completed years of university study and a very good academic record. The FAQ covers extra steps for non-EU interns.',
+    eligibilitySummary:
+      '2 university years completed; still enrolled in summer. Up to first-year master’s.',
+    verificationStatus: 'Source checked',
+    sourceUrl: HELMHOLTZ_EPI,
+    sources: [
+      {
+        title: 'Programme and 2027 announcement',
+        url: HELMHOLTZ_EPI,
+        checkedAt: NOV_17,
+      },
+      {
+        title: 'Frequently asked questions',
+        url: HELMHOLTZ_FAQ,
+        checkedAt: NOV_17,
+      },
+      { title: 'Required documents', url: HELMHOLTZ_DOCS, checkedAt: NOV_17 },
+    ],
+    evidence: {
+      country: checked(HELMHOLTZ_EPI, NOV_17),
+      location: checked(HELMHOLTZ_FAQ, NOV_17),
+      eligibleDegrees: checked(HELMHOLTZ_EPI, NOV_17),
+      eligibilityDetails: checked(HELMHOLTZ_EPI, NOV_17),
+      eligibilitySummary: checked(HELMHOLTZ_EPI, NOV_17, summaryNote),
+      yearOfStudyRequirement: checked(HELMHOLTZ_EPI, NOV_17),
+      gpaRequirement: notStated(
+        HELMHOLTZ_EPI,
+        NOV_17,
+        'Only “a very good academic record” is asked for.',
+      ),
+      requiredDocuments: checked(
+        HELMHOLTZ_DOCS,
+        NOV_17,
+        'Combined into one PDF; reference letters are not mandatory. The 2027 call has not opened yet, so confirm the list when it does.',
+      ),
+      funding: checked(HELMHOLTZ_EPI, NOV_17),
+      fundingDetails: checked(HELMHOLTZ_FAQ, NOV_17),
+      costs: checked(HELMHOLTZ_FAQ, NOV_17),
+      duration: checked(HELMHOLTZ_EPI, NOV_17),
+      period: checked(HELMHOLTZ_EPI, NOV_17),
+      dates: checked(
+        HELMHOLTZ_FAQ,
+        NOV_17,
+        'The FAQ says the internship always starts on 1 July and runs about two months.',
+      ),
+      deadline: notStated(
+        HELMHOLTZ_FAQ,
+        NOV_17,
+        'No 2027 deadline yet: the site says it will be updated once the application period is released.',
+      ),
+      applicationStatus: checked(
+        HELMHOLTZ_EPI,
+        NOV_17,
+        'The page says applications for the 2027 programme will open in late 2026, without an exact date. It currently shows applications as closed.',
+      ),
+      applicationRoute: checked(HELMHOLTZ_FAQ, NOV_17),
+    },
+  }),
+  defineRealOpportunity({
+    id: 'fribourg-bim-summer-2027',
+    slug: 'fribourg-bio-inspired-materials-summer-2027',
+    title: 'Bio-inspired Materials Summer Internships 2027',
+    institution: 'Fribourg Center for Bio-inspired Materials',
+    country: 'Switzerland',
+    location: 'Fribourg',
+    category: 'Structured programme',
+    scientificTopics: ['Bio-inspired materials', 'Biophysics', 'Cell biology'],
+    cycleLabel: 'Summer 2027',
+    description:
+      'Up to 12 undergraduates spend 8–10 weeks in one of the centre’s labs working on soft and bio-inspired materials, ending with a poster session.',
+    eligibleDegrees: ['Bachelor’s'],
+    yearOfStudyRequirement:
+      'At least two years of a full-time degree completed by the start of the stay, and still registered for the next academic year. Master’s students are not eligible.',
+    gpaRequirement: null,
+    requiredDocuments: [
+      'One-page CV',
+      'Academic transcript',
+      'Certificate of enrolment',
+      'One reference letter (the centre contacts your referee)',
+      'English certificate if applicable',
+      'Short motivation statement and three preferred projects',
+    ],
+    funding: 'Partially funded',
+    fundingDetails:
+      'The host group pays for housing for the whole stay. Travel is reimbursed up to CHF 600 within Europe or CHF 1,500 from overseas. No stipend is mentioned.',
+    costs:
+      'Meals, local transport and health/accident insurance are not covered. European students may be able to get a SEMP travel grant.',
+    duration: '8–10 weeks',
+    period: 'Summer',
+    dates:
+      'Between 15 June and 31 August 2027; poster session in the week of 16–20 August',
+    deadline: '2027-01-20',
+    applicationStatus: 'Upcoming',
+    applicationRoute:
+      'Online form only, open from 1 December 2026; choose three preferred projects. Email applications are not accepted.',
+    eligibilityDetails:
+      'Full-time undergraduates in a relevant natural-science field, not studying at the University of Fribourg. Only nationals of Switzerland, the EU or countries with a Swiss visa exemption for stays up to 89 days. English at B2/C1 level.',
+    eligibilitySummary:
+      'Swiss, EU or visa-exempt nationals only. 2 years completed; master’s not eligible.',
+    verificationStatus: 'Source checked',
+    sourceUrl: FRIBOURG,
+    sources: [
+      { title: 'Summer 2027 programme', url: FRIBOURG, checkedAt: NOV_17 },
+      {
+        title: 'Application process and deadline',
+        url: FRIBOURG_APPLY,
+        checkedAt: NOV_17,
+      },
+      {
+        title: 'Frequently asked questions',
+        url: FRIBOURG_FAQ,
+        checkedAt: NOV_17,
+      },
+    ],
+    evidence: {
+      country: checked(FRIBOURG, NOV_17),
+      location: checked(FRIBOURG, NOV_17),
+      eligibleDegrees: checked(FRIBOURG_APPLY, NOV_17),
+      eligibilityDetails: checked(FRIBOURG_APPLY, NOV_17),
+      eligibilitySummary: checked(FRIBOURG_APPLY, NOV_17, summaryNote),
+      yearOfStudyRequirement: checked(FRIBOURG_APPLY, NOV_17),
+      gpaRequirement: notStated(
+        FRIBOURG_APPLY,
+        NOV_17,
+        'No minimum grade is given; the form asks for your cumulative grade and an explanation of your grading system.',
+      ),
+      requiredDocuments: checked(FRIBOURG_APPLY, NOV_17),
+      funding: checked(
+        FRIBOURG_FAQ,
+        NOV_17,
+        'Housing and capped travel are covered; living costs are not, so this is listed as partially funded.',
+      ),
+      fundingDetails: checked(FRIBOURG_FAQ, NOV_17),
+      costs: checked(FRIBOURG_FAQ, NOV_17),
+      duration: checked(FRIBOURG, NOV_17),
+      period: checked(FRIBOURG, NOV_17),
+      dates: checked(FRIBOURG, NOV_17),
+      deadline: checked(
+        FRIBOURG_APPLY,
+        NOV_17,
+        '20 January 2027, “midnight CET”. Midnight is ambiguous, so submit by the evening of 19 January to be safe.',
+      ),
+      applicationStatus: checked(
+        FRIBOURG_APPLY,
+        NOV_17,
+        'Applications open on 1 December 2026.',
+      ),
+      applicationRoute: checked(FRIBOURG_FAQ, NOV_17),
     },
   }),
   defineRealOpportunity({
